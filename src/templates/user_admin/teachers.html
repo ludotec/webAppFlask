@@ -1,0 +1,119 @@
+{% include 'user_admin/header_forms.html' %}
+{{ moment.include_moment() }}
+<header>
+    <nav class="navbar navbar-expand navbar-light bg-light">
+        <div class="nav navbar-nav">
+            <a class="nav-item nav-link active" href="{{ url_for('user_admin') }}" aria-current="page">Home</span></a>
+            <a role="button" class="nav-item nav-link" data-bs-toggle="modal" data-bs-target="#exampleModal">Crear Profesores</a>
+            <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
+          </div>
+    </nav>
+</header>
+<div class="container">
+    <p>Current date and time: {{ moment().format('YYYY-MM-DD hh:mm:ss') }}</p>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form action="/admin/teachers/save" method="post">  
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <div class="mb-3">
+            <label for="txtApenom" class="form-label">Apellido y Nombre</label>
+            <input type="text" name="txtApenom" id="txtApenom" class="form-control" aria-describedby="helpId" required>
+          </div>
+          <div class="mb-3">
+            <label for="txtAddress" class="form-label">Dirección</label>
+            <input type="text" name="txtAddress" id="txtAddress" class="form-control" aria-describedby="helpId" required>
+          </div>
+          <div class="mb-3">
+            <label for="txtLocalidad" class="form-label">Localidad</label>
+            <input type="text" name="txtLocalidad" id="txtLocalidad" class="form-control" aria-describedby="helpId" required>
+          </div>
+          <div class="mb-3">
+            <label for="txtDateBorn" class="form-label">Fecha de Nacimiento</label>
+            <input type="date" name="txtDateBorn" id="txtDateBorn" class="form-control" aria-describedby="helpId" required>
+          </div>
+          <div class="mb-3">
+            <label for="txtPhone" class="form-label">Teléfono</label>
+            <input type="text" name="txtPhone" id="txtPhone" class="form-control" aria-describedby="helpId" required>
+          </div>
+          <div class="mb-3">
+            <label for="txtEmail" class="form-label">Correo electrónico</label>
+            <input type="text" name="txtEmail" id="txtEmail" class="form-control" aria-describedby="helpId" required>
+          </div>
+           <input type="hidden" name="txtCreatedAt" id="txtCreatedAt" class="form-control" aria-describedby="helpId">
+           <script>
+            const dateInput = document.getElementById('txtCreatedAt');
+                 // ✅ Using UTC (universal coordinated time)
+                 dateInput.value = moment().format('YYYY-MM-DD hh:mm:ss');
+                 console.log(new Date().toISOString().split('T')[0]);
+            </script>
+           <input type="hidden" name="txtRole" id="txtRole" class="form-control"  aria-describedby="helpId" value="profesor">
+          <div class="mb-3">
+            <label for="txtDateBorn" class="form-label">Estado</label>
+            <select class="form-select form-select-md" name="txtDateBorn" id="txtDateBorn" required>
+                <option value="1" selected>Habilitado</option>
+                <option value="0">No Habilitado</option>
+            </select>
+          </div>
+          
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+    </form>
+      </div>
+    </div>
+  </div>
+  
+<br>
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-end">
+      <li class="page-item disabled">
+        <a class="page-link">Previous</a>
+      </li>
+      <li class="page-item"><a class="page-link" href="#">1</a></li>
+      <li class="page-item"><a class="page-link" href="#">2</a></li>
+      <li class="page-item"><a class="page-link" href="#">3</a></li>
+      <li class="page-item">
+        <a class="page-link" href="#">Next</a>
+      </li>
+    </ul>
+  </nav>
+  <div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Usuario</th>
+                <th scope="col">Nombre y Apellido</th>
+                <th scope="col">Rol</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for person in allPersons %}
+            <tr class="">
+                <td scope="row">{{person[1]}}</td>
+                <td>{{person[2]}}</td>
+                <td>{{person[3]}}</td>
+                <td>
+                    {% if person[3] != 'admin' %}
+                    <a class="btn btn-danger"  href="{{ url_for('delete_users',id=person[0])}}" onClick="return asking()" role="button">
+                        Eliminar
+                    </a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+  </div>
+  
+
+  {% include 'user_admin/footer.html' %}
