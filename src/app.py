@@ -12,6 +12,8 @@ from config import config
 # models
 from models.ModelUser import ModelUser
 from models.ModelPerson import ModelPerson
+from models.ModelCareer import ModelCareer
+from models.ModelSignature import ModelSignature
 
 # entities
 from models.entities.User import User
@@ -57,7 +59,7 @@ def login():
         # print(request.form['password'])
         user = User(0,request.form['username'],request.form['password'])
         logged_user=ModelUser.login(db, user)
-        logged_user_rol_id=ModelUser.get__by_role_id(db, user.username)
+        logged_user_rol_id=ModelUser.get_by_role_id(db, user.username)
         print(logged_user_rol_id)
         if logged_user != None:
             if logged_user.password:
@@ -106,7 +108,7 @@ def user_users():
 @login_required
 @check_role(['admin'])
 def users_form():
-    allUsers=ModelUser.get__all(db)
+    allUsers=ModelUser.get_all(db)
     return render_template('user_admin/users.html', allUsers=allUsers)
 
 @app.route('/admin/users/save', methods=['POST'])
@@ -115,25 +117,101 @@ def save_users():
     _password = request.form['txtPassword']
     _fullname = request.form['txtFullname']
     _rol = request.form['txtRol']
-    ModelUser.set_user(db,_username,_password,_fullname,_rol)
+    ModelUser.create(db,_username,_password,_fullname,_rol)
     return redirect(url_for('users_form'))
     
 @app.route('/admin/users/delete/<id>', methods=['GET','POST'])
 def delete_users(id):
-    ModelUser.delete_user(db, id)
+    ModelUser.delete(db, id)
     return redirect(url_for('users_form'))
 
 @app.route('/admin/careers')
 @login_required
 @check_role(['admin'])
 def careers_form():
-    return render_template('user_admin/careers.html')
+    allCareers=ModelCareer.get_all(db)
+    return render_template('user_admin/careers.html', allCareers=allCareers)
+
+@app.route('/admin/careers/save', methods=['POST'])
+def save_careers():
+    _name = request.form['txtName']
+    _code = request.form['txtCode']
+    _created_at = request.form['txtCreatedAt']
+    _active = request.form['txtActive']
+    ModelCareer.create(db, _name,_code,_created_at,_active)
+    return redirect(url_for('careers_form'))
+
+@app.route('/admin/careers/edit', methods=['POST'])
+def edit_careers():
+    _id = request.form['txtId']
+    if request.form.get('chkName') !='yes': None 
+    else: 
+        _val = request.form['txtName']
+        datos=(_val,int(_id))
+        pos = 1
+        ModelCareer.edit(db,datos, pos)
+    if request.form.get('chkCode') !='yes': None
+    else: 
+        _val = request.form['txtCode']
+        datos=(int(_val),int(_id))
+        pos = 2
+        ModelCareer.edit(db,datos, pos)
+    if request.form.get('chkActive') !='yes': None
+    else: 
+        _val = request.form['txtActive']
+        datos=(_val,int(_id))
+        pos = 3
+        ModelCareer.edit(db, datos, pos)
+    return redirect(url_for('careers_form'))
+
+@app.route('/admin/careers/delete/<id>', methods=['GET','POST'])
+def delete_careers(id):
+    ModelCareer.delete(db, id)
+    return redirect(url_for('careers_form'))
 
 @app.route('/admin/signatures')
 @login_required
 @check_role(['admin'])
 def signatures_form():
     return render_template('user_admin/signatures.html')
+
+@app.route('/admin/signatures/save', methods=['POST'])
+def save_signatures():
+    _name = request.form['txtName']
+    _code = request.form['txtCode']
+    _career_from =  request.form['txtCareerFrom']
+    _created_at = request.form['txtCreatedAt']
+    _active = request.form['txtActive']
+    ModelSignature.create(db, _name,_code,_career_from,_created_at,_active)
+    return redirect(url_for('signatures_form'))
+
+@app.route('/admin/signatures/edit', methods=['POST'])
+def edit_signatures():
+    _id = request.form['txtId']
+    if request.form.get('chkName') !='yes': None 
+    else: 
+        _val = request.form['txtName']
+        datos=(_val,int(_id))
+        pos = 1
+        ModelSignature.edit(db,datos, pos)
+    if request.form.get('chkCode') !='yes': None
+    else: 
+        _val = request.form['txtCode']
+        datos=(int(_val),int(_id))
+        pos = 2
+        ModelSignature.edit(db,datos, pos)
+    if request.form.get('chkActive') !='yes': None
+    else: 
+        _val = request.form['txtActive']
+        datos=(_val,int(_id))
+        pos = 3
+        ModelSignature.edit(db, datos, pos)
+    return redirect(url_for('signatures_form'))
+
+@app.route('/admin/signatures/delete/<id>', methods=['GET','POST'])
+def delete_signatures(id):
+    ModelSignature.delete(db, id)
+    return redirect(url_for('signatures_form'))
 
 @app.route('/admin/teachers')
 @login_required
@@ -142,16 +220,67 @@ def teachers_form():
     allPersons=ModelPerson.get_all(db)
     return render_template('user_admin/teachers.html',allPersons=allPersons )
 
+@app.route('/admin/teachers/<id>', methods=['GET'])
+@login_required
+@check_role(['admin'])
+def get_teacher_by_id(id):
+    person=ModelPerson.get_by_id(db, id)
+    return render_template('user_admin/teachers.html',person=person )
+
 @app.route('/admin/teachers/save', methods=['POST'])
 def save_teachers():
-    _username = request.form['txtApenom']
-    _password = request.form['txtAddress']
-    _fullname = request.form['txtCreatedAt']
-    _rol = request.form['txtDateBorn']
-    print(_username)
-    print(_fullname)
+    _fullname = request.form['txtFullname']
+    _dni = request.form['txtDU']
+    _address = request.form['txtAddress']
+    _city = request.form['txtCity']
+    _birth_date = request.form['txtBirthDate']
+    _phone_number = request.form['txtPhoneNumber']
+    _email = request.form['txtEmail']
+    _created_at = request.form['txtCreatedAt']
+    _role = request.form['txtRole']
+    _active = request.form['txtActive']
+    ModelPerson.create(db, _fullname,_address,_city,_birth_date, _dni,_phone_number,_email,_created_at,_role,_active)
     return redirect(url_for('teachers_form'))
 
+@app.route('/admin/teachers/edit', methods=['POST'])
+def edit_teachers():
+    _id = request.form['txtId']
+    if request.form.get('chkAddress') !='yes': None 
+    else: 
+        _val = request.form['txtAddress']
+        datos=(_val,int(_id))
+        pos = 1
+        ModelPerson.edit(db,datos, pos)
+    if request.form.get('chkCity') !='yes': None
+    else: 
+        _val = request.form['txtCity']
+        datos=(_val,int(_id))
+        pos = 2
+        ModelPerson.edit(db,datos, pos)
+    if request.form.get('chkPhoneNumber') !='yes': None 
+    else: 
+        _val = request.form['txtPhoneNumber']
+        datos=(_val,int(_id))
+        pos = 3
+        ModelPerson.edit(db,datos, pos)
+    if request.form.get('chkEmail') !='yes': None
+    else: 
+        _val = request.form['txtEmail']
+        datos=(_val,int(_id))
+        pos = 4
+        ModelPerson.edit(db,datos, pos)
+    if request.form.get('chkActive') !='yes': None
+    else: 
+        _val = request.form['txtActive']
+        datos=(_val,int(_id))
+        pos = 5
+        ModelPerson.edit(db, datos, pos)
+    return redirect(url_for('teachers_form'))
+
+@app.route('/admin/teachers/delete/<id>', methods=['GET','POST'])
+def delete_teachers(id):
+    ModelPerson.delete(db, id)
+    return redirect(url_for('teachers_form'))
 
 def status_401(error):
     return redirect(url_for('login'))

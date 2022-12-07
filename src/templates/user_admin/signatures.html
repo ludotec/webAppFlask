@@ -1,11 +1,15 @@
 {% include 'user_admin/header_forms.html' %}
+{{ moment.include_moment() }}
 <header>
     <nav class="navbar navbar-expand navbar-light bg-light">
         <div class="nav navbar-nav">
             <a class="nav-item nav-link active" href="{{ url_for('user_admin') }}" aria-current="page">Home</span></a>
             <a role="button" class="nav-item nav-link" data-bs-toggle="modal" data-bs-target="#exampleModal">Crear Materias</a>
             <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
+            <p class="nav-item nav-link active"><strong> Current date and time: {{ moment().format('DD-MM-YYYY hh:mm:ss') }}</strong></p>
           </div>
+
+          
     </nav>
 </header>
 <div class="container">
@@ -18,26 +22,32 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form action="/admin/users/save" method="post">  
+          <form action="/admin/signatures/save" method="post">  
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <div class="mb-3">
-            <label for="txtUsername" class="form-label">Nombre de usuario</label>
-            <input type="text" name="txtUsername" id="txtUsername" class="form-control" placeholder="Username" aria-describedby="helpId" required>
+            <label for="txtName" class="form-label">Nombre</label>
+            <input type="text" name="txtName" id="txtName" class="form-control" aria-describedby="helpId" required>
           </div>
           <div class="mb-3">
-            <label for="txtPassword" class="form-label">Contraseña</label>
-            <input type="password" name="txtPassword" id="txtPassword" class="form-control" placeholder="Password" aria-describedby="helpId" required>
+            <label for="txtCode" class="form-label">Codigo</label>
+            <input type="number" name="txtCode" id="txtCode" class="form-control"aria-describedby="helpId" required>
           </div>
           <div class="mb-3">
-            <label for="txtFullname" class="form-label">Nombre y Apellido</label>
-            <input type="text" name="txtFullname" id="txtFullname" class="form-control" placeholder="Fullname" aria-describedby="helpId" required>
+            <label for="txtCareerFrom" class="form-label">Carrera</label>
+            <input type="text" name="txtCareerFrom" id="txtCareerFrom" class="form-control" aria-describedby="helpId" required>
           </div>
+          <input type="hidden" name="txtCreatedAt" id="txtCreatedAt" class="form-control" aria-describedby="helpId">
+            <script>
+              const dateInput = document.getElementById('txtCreatedAt');
+                   // ✅ Using UTC (universal coordinated time)
+                   dateInput.value = moment().format('YYYY-MM-DD hh:mm:ss');
+                   console.log(new Date().toISOString().split('T')[0]);
+            </script>
           <div class="mb-3">
-            <label for="txtRol" class="form-label">Rol</label>
-            <select class="form-select form-select-md" name="txtRol" id="txtRol" required>
-                <option value="admin">Admin</option>
-                <option value="aux">Aux</option>
-                <option value="user" selected>User</option>
+            <label for="txtActive" class="form-label">Habilitado</label>
+            <select class="form-select form-select-md" name="txtActive" id="txtActive" required>
+                <option value="1" selected>Habilitado</option>
+                <option value="0">No habilitado</option>
             </select>
           </div>
           
@@ -69,24 +79,87 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th scope="col">Usuario</th>
-                <th scope="col">Nombre y Apellido</th>
-                <th scope="col">Rol</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Codigo</th>
+                <th scope="col">Carrera</th>
+                <th scope="col">Fecha de creación</th>
+                <th scope="col">Habilitado</th>
                 <th scope="col">Acciones</th>
             </tr>
         </thead>
         <tbody>
-            {% for user in allUsers %}
+            {% for signature in allSignatures %}
             <tr class="">
-                <td scope="row">{{user[1]}}</td>
-                <td>{{user[2]}}</td>
-                <td>{{user[3]}}</td>
+                <td scope="row">{{signature[1]}}</td>
+                <td>{{signature[2]}}</td>
+                <td>{{signature[3]}}</td>
                 <td>
-                    {% if user[3] != 'admin' %}
-                    <a class="btn btn-danger"  href="{{ url_for('delete_users',id=user[0])}}" onClick="return asking()" role="button">
-                        Eliminar
-                    </a>
-                    {% endif %}
+                  <a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete{{signature[0]}}" role="button">
+                    Eliminar
+                </a>
+                <div class="modal fade" id="delete{{signature[0]}}" tabindex="-1" aria-labelledby="editLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="editLabel">Eliminar Carrera</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <p><strong>Esta por eliminar a {{signature[1]}}!</strong></p>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <a class="btn btn-primary" href="{{ url_for('delete_signatures',id=signature[0])}}" role="button">Aceptar</a>
+                      </div>
+                  </div>
+                </div>
+               </div> 
+                <a class="btn btn-success"  data-bs-toggle="modal" data-bs-target="#edit{{signature[0]}}" role="button">
+                  Editar
+              </a>
+                <!-- Modal Nuevo Profesor -->
+<div class="modal fade" id="edit{{signature[0]}}" tabindex="-1" aria-labelledby="editLabel" aria-hidden="true">
+<div class="modal-dialog">
+<div class="modal-content">
+  <div class="modal-header">
+    <h1 class="modal-title fs-5" id="editLabel">Editar Materia</h1>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    <p><strong>Tilde las opciones que va a actualizar.</strong></p>
+    <form action="/admin/signatures/edit" method="post">  
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="txtId" value="{{signature[0]}}">
+    <div class="mb-3">
+      <input type="checkbox" name="chkName" id="chkName" value="yes" style="margin: 0 3px;"><label for="txtName" class="form-label">Nombre</label>
+      <input type="text" name="txtName" id="txtName" placeholder="{{signature[1]}}" class="form-control"  aria-describedby="helpId">
+    </div>
+    <div class="mb-3">
+      <input type="checkbox" name="chkCode" id="chkCode" value="yes" style="margin: 0 3px;"><label for="txtCode" class="form-label">Dirección</label>
+      <input type="number" name="txtCode" id="txtCode" class="form-control" aria-describedby="helpId" placeholder="{{signature[2]}}">
+    </div>
+    <div class="mb-3">
+      <input type="checkbox" name="chkCareer_from" id="chkCode" value="yes" style="margin: 0 3px;"><label for="txtCareer_from" class="form-label">Carrera</label>
+      <input type="number" name="txtCareer_from" id="txtCareer_from" class="form-control" aria-describedby="helpId" placeholder="{{signature[2]}}">
+    </div>
+    <div class="mb-3">
+      <input type="checkbox" name="chkActive" id="chkActive" value="yes" style="margin: 0 3px;"><label for="txtActive" class="form-label">Estado</label>
+      <select class="form-select form-select-md" name="txtActive" id="txtActive">
+          <option value="1" selected>Habilitado</option>
+          <option value="0">No Habilitado</option>
+      </select>
+    </div>
+    
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+    <button type="submit" class="btn btn-primary">Guardar</button>
+  </div>
+</form>
+</div>
+</div>
+</div>
+
                 </td>
             </tr>
             {% endfor %}
