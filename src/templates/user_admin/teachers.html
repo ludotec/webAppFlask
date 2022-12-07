@@ -113,7 +113,13 @@
                 <td>{{person[7]}}</td>
                 <td>{{person[5]}}</td>
                 <td>{{person[6]}}</td>
-                <td>{{person[10]}}</td>
+                
+                {% if person[10] == 1 %}
+                <td>Si</td>
+                {% endif %}
+                {% if person[10] != 1 %}
+                <td>No</td>
+                {% endif %}
                 <td>
                     <a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete{{person[0]}}" role="button">
                         Eliminar

@@ -58,7 +58,7 @@ class ModelUser():
             raise Exception(ex)
 
     @classmethod
-    def get__by_role_id(self, db, name_user):
+    def get_by_role_id(self, db, name_user):
         try:
             con=db.connect()
             cursor = con.cursor()
@@ -78,7 +78,7 @@ class ModelUser():
             raise Exception(ex)
 
     @classmethod
-    def set_user(self, db, username, password, fullname, rol):
+    def create(self, db, username, password, fullname, rol):
         hashed_password=generate_password_hash(password)
         match rol:
             case 'admin':
@@ -87,12 +87,7 @@ class ModelUser():
                 rol_id = 2
             case 'user' :
                 rol_id = 3
-        
-        print(username)
-        print(hashed_password)
-        print(fullname)
-        print(rol_id)
-        
+                
         try:
             con=db.connect()
             cursor=con.cursor()
@@ -111,7 +106,7 @@ class ModelUser():
             raise Exception(ex)
 
     @classmethod
-    def get__all(self, db):
+    def get_all(self, db):
         try:
             con=db.connect()
             cursor = con.cursor()
@@ -129,7 +124,7 @@ class ModelUser():
             raise Exception(ex)
 
     @classmethod
-    def delete_user(self, db, id):
+    def delete(self, db, id):
         try:
             con=db.connect()
             cursor = con.cursor()
