@@ -142,16 +142,67 @@ def teachers_form():
     allPersons=ModelPerson.get_all(db)
     return render_template('user_admin/teachers.html',allPersons=allPersons )
 
+@app.route('/admin/teachers/<id>', methods=['GET'])
+@login_required
+@check_role(['admin'])
+def get_teacher_by_id(id):
+    person=ModelPerson.get_by_id(db, id)
+    return render_template('user_admin/teachers.html',person=person )
+
 @app.route('/admin/teachers/save', methods=['POST'])
 def save_teachers():
-    _username = request.form['txtApenom']
-    _password = request.form['txtAddress']
-    _fullname = request.form['txtCreatedAt']
-    _rol = request.form['txtDateBorn']
-    print(_username)
-    print(_fullname)
+    _fullname = request.form['txtFullname']
+    _dni = request.form['txtDU']
+    _address = request.form['txtAddress']
+    _city = request.form['txtCity']
+    _birth_date = request.form['txtBirthDate']
+    _phone_number = request.form['txtPhoneNumber']
+    _email = request.form['txtEmail']
+    _created_at = request.form['txtCreatedAt']
+    _role = request.form['txtRole']
+    _active = request.form['txtActive']
+    ModelPerson.set_teacher(db, _fullname,_address,_city,_birth_date, _dni,_phone_number,_email,_created_at,_role,_active)
     return redirect(url_for('teachers_form'))
 
+@app.route('/admin/teachers/edit', methods=['POST'])
+def edit_teachers():
+    _id = request.form['txtId']
+    if request.form.get('chkAddress') !='yes': None 
+    else: 
+        _val = request.form['txtAddress']
+        datos=(_val,int(_id))
+        pos = 1
+        ModelPerson.edit_teacher(db,datos, pos)
+    if request.form.get('chkCity') !='yes': None
+    else: 
+        _val = request.form['txtCity']
+        datos=(_val,int(_id))
+        pos = 2
+        ModelPerson.edit_teacher(db,datos, pos)
+    if request.form.get('chkPhoneNumber') !='yes': None 
+    else: 
+        _val = request.form['txtPhoneNumber']
+        datos=(_val,int(_id))
+        pos = 3
+        ModelPerson.edit_teacher(db,datos, pos)
+    if request.form.get('chkEmail') !='yes': None
+    else: 
+        _val = request.form['txtEmail']
+        datos=(_val,int(_id))
+        pos = 4
+        ModelPerson.edit_teacher(db,datos, pos)
+    if request.form.get('chkActive') !='yes': None
+    else: 
+        _val = request.form['txtActive']
+        datos=(_val,int(_id))
+        pos = 5
+        ModelPerson.edit_teacher(db, datos, pos)
+    return redirect(url_for('teachers_form'))
+
+@app.route('/admin/teachers/delete/<id>', methods=['GET','POST'])
+def delete_teachers(id):
+    ModelPerson.delete_teacher(db, id)
+    return redirect(url_for('teachers_form'))
 
 def status_401(error):
     return redirect(url_for('login'))
