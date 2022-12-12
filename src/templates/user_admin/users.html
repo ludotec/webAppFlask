@@ -14,7 +14,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Nuevo Usuario</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -22,28 +22,32 @@
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <div class="mb-3">
             <label for="txtUsername" class="form-label">Nombre de usuario</label>
-            <input type="text" name="txtUsername" id="txtUsername" class="form-control" placeholder="Username" aria-describedby="helpId" required>
+            <input type="text" name="txtUsername" id="txtUsername" class="form-control" placeholder="Ingrese nombre de usuario" aria-describedby="helpId" required>
           </div>
           <div class="mb-3">
             <label for="txtPassword" class="form-label">Contraseña</label>
-            <input type="password" name="txtPassword" id="txtPassword" class="form-control" placeholder="Password" aria-describedby="helpId" required>
+            <input type="password" name="txtPassword" id="txtPassword" class="form-control" placeholder="Ingrese la contraseña" aria-describedby="helpId" required>
           </div>
           <div class="mb-3">
             <label for="txtFullname" class="form-label">Nombre y Apellido</label>
-            <input type="text" name="txtFullname" id="txtFullname" class="form-control" placeholder="Fullname" aria-describedby="helpId" required>
+            <input type="text" name="txtFullname" id="txtFullname" class="form-control" placeholder="Ingrese nombre, apellido" aria-describedby="helpId" required>
+          </div>
+          <div class="mb-3">
+            <label for="txtCode" class="form-label">Código <strong>(Solo Profesores)</strong></label>
+            <input type="text" name="txtCode" id="txtCode" class="form-control" placeholder="Ingrese el código del profesor" aria-describedby="helpId">
           </div>
           <div class="mb-3">
             <label for="txtRol" class="form-label">Rol</label>
             <select class="form-select form-select-md" name="txtRol" id="txtRol" required>
-                <option value="admin">Admin</option>
-                <option value="aux">Aux</option>
-                <option value="user" selected>User</option>
+                <option value="admin">Administrador</option>
+                <option value="aux">Auxiliar</option>
+                <option value="user" selected>Profesor</option>
             </select>
           </div>
           
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
           <button type="submit" class="btn btn-primary">Guardar</button>
         </div>
     </form>
@@ -52,6 +56,20 @@
   </div>
   
 <br>
+{% with messages = get_flashed_messages() %}
+
+    {% if messages  %}
+    <br>
+    {% for message in messages %}
+    <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+        <strong>{{ message }}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
 <nav aria-label="Page navigation example">
     <ul class="pagination justify-content-end">
       <li class="page-item disabled">
@@ -83,10 +101,72 @@
                 <td>{{user[3]}}</td>
                 <td>
                     {% if user[3] != 'admin' %}
-                    <a class="btn btn-danger"  href="{{ url_for('delete_users',id=user[0])}}" onClick="return asking()" role="button">
+                    <a class="btn btn-danger"  data-bs-toggle="modal" data-bs-target="#delete{{user[0]}}" role="button">
                         Eliminar
                     </a>
-                    {% endif %}
+                    <div class="modal fade" id="delete{{user[0]}}" tabindex="-1" aria-labelledby="editLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="editLabel">Eliminar Usuario</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            <p><strong>Esta por eliminar a {{user[1]}}!</strong></p>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <a class="btn btn-primary"  href="{{ url_for('delete_users',id=user[0])}}" role="button">Aceptar</a>
+                          </div>
+                      </div>
+                    </div>
+                   </div> 
+                   {% endif %}
+                   <a class="btn btn-success"  data-bs-toggle="modal" data-bs-target="#edit{{user[0]}}" role="button" onclick="myResetFunction()">
+                    Cambiar Contraseña
+                </a>
+                  <!-- Modal cambiar contraseña -->
+<div class="modal fade" id="edit{{user[0]}}" tabindex="-1" aria-labelledby="editLabel" aria-hidden="true">
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h1 class="modal-title fs-5" id="editLabel">Cambiar Contraseña</h1>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+      <div id="msg"></div>
+      <!-- Mensajes de Verificación -->
+      <div id="error" class="alert alert-danger ocultar" role="alert"  style="display: none;">
+          Las Contraseñas no coinciden, vuelve a intentar !
+      </div>
+      <div id="ok" class="alert alert-success ocultar" role="alert" style="display: none;">
+          Las Contraseñas coinciden ! (Procesando formulario ... )
+      </div>
+      <!-- Fin Mensajes de Verificación -->
+      <form action="/admin/users/edit" method="post" id="formChPass" onsubmit="verificarPasswords(); return false">  
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="txtId" value="{{user[0]}}">
+      <div class="mb-3">
+        <label for="txtPass1" class="form-label">Contraseña</label>
+        <input type="password" name="txtPass1" id="pass1" class="form-control"  aria-describedby="helpId" required>
+      </div>
+      <div class="mb-3">
+        <label for="txtPass2" class="form-label">Confirmar Contraseña</label>
+        <input type="password" name="txtPass2" id="pass2" class="form-control" aria-describedby="helpId" required>
+      </div>
+            
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      <button type="submit" class="btn btn-primary">Enviar</button>
+    </div>
+</form>
+    
+  </div>
+</div>
+</div>
+                   
+              
                 </td>
             </tr>
             {% endfor %}

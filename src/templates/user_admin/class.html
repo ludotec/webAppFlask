@@ -1,0 +1,221 @@
+{% include 'user_admin/header_forms.html' %}
+{{ moment.include_moment() }}
+<header>
+    <nav class="navbar navbar-expand navbar-light bg-light">
+        <div class="nav navbar-nav">
+            {% if current_user.rol == 'admin' %}
+            <a class="nav-item nav-link active" href="{{ url_for('user_admin') }}" aria-current="page">Home</span></a>
+            {% endif %}
+            {% if current_user.rol == 'aux' %}
+            <a class="nav-item nav-link active" href="{{ url_for('user_aux') }}" aria-current="page">Home</span></a>
+            {% endif %}
+            
+            <a role="button" class="nav-item nav-link" data-bs-toggle="modal" data-bs-target="#exampleModal">Crear Clase</a>
+            <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
+          </div>
+    </nav>
+</header>
+<div class="container">
+  <p>Current date and time: {{ moment().format('YYYY-MM-DD hh:mm:ss') }}</p>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form action="/admin/class/save" method="post">  
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <div class="mb-3">
+            <label for="txtIdMateria" class="form-label">Materia</label>
+            <select class="form-select form-select-md" name="txtIdMateria" id="txtIdMateria" required>
+              <option value="" selected>Seleccionar</option>
+              {% for subject in allSubjects %}
+                <option value="{{subject[2]}}">{{subject[1]}}</option>
+              {% endfor %}  
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="txtIdMaestro" class="form-label">Docente</label>
+            <select class="form-select form-select-md" name="txtIdMaestro" id="txtIdMaestro" required>
+                <option value="" selected>Seleccionar</option>
+              {% for person in allPersons %}
+                <option value="{{person[10]}}">{{person[1]}}</option>
+              {% endfor %}  
+            </select>
+          </div>
+            <div class="mb-3">
+            <label for="txtId" class="form-label">Código</label><strong><span style="color: orangered;">&nbsp;(Siguiente código {{maxCode}})</span></strong></label>
+            <input type="number" name="txtId" id="txtId" placeholder="Ingrese código de clase" class="form-control"  aria-describedby="helpId" required>         
+          </div>
+          
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Crear</button>
+        </div>
+    </form>
+      </div>
+    </div>
+  </div>
+<br>
+{% with messages = get_flashed_messages(with_categories=true) %}
+
+    {% if messages  %}
+    <br>
+    {% for category, message in messages %}
+    <div class="alert alert-{{category}} alert-dismissible fade show text-center" role="alert">
+        <strong>{{ message }}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-end">
+      <li class="page-item disabled">
+        <a class="page-link">Previous</a>
+      </li>
+      <li class="page-item"><a class="page-link" href="#">1</a></li>
+      <li class="page-item"><a class="page-link" href="#">2</a></li>
+      <li class="page-item"><a class="page-link" href="#">3</a></li>
+      <li class="page-item">
+        <a class="page-link" href="#">Next</a>
+      </li>
+    </ul>
+  </nav>
+  <div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Carrera</th>
+                <th scope="col">Materia</th>
+                <th scope="col">Profesor</th>
+                <th scope="col">Código</th>
+                <th scope="col">Cant. Alumnos</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in allCourses  %}
+            <tr class="">
+                <td scope="row">{{course[1]}}</td>
+                <td>{{course[2]}}</td>
+                <td>{{course[3]}}</td>
+                <td>{{course[0]}}</td>
+                <td>30</td>
+                <td>
+                  <a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete{{course[0]}}" role="button">
+                    Eliminar
+                </a>
+                <div class="modal fade" id="delete{{course[0]}}" tabindex="-1" aria-labelledby="editLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="editLabel">Eliminar Carrera</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <p><strong>Esta por eliminar a {{course[1]}}!</strong></p>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <a class="btn btn-primary" href="{{ url_for('delete_course',id=course[0])}}" role="button">Aceptar</a>
+                      </div>
+                  </div>
+                </div>
+               </div> 
+                <a class="btn btn-success"  data-bs-toggle="modal" data-bs-target="#edit{{course[0]}}" role="button">
+                  Editar
+              </a>
+                <!-- Modal Nuevo Profesor -->
+<div class="modal fade" id="edit{{course[0]}}" tabindex="-1" aria-labelledby="editLabel" aria-hidden="true">
+<div class="modal-dialog">
+<div class="modal-content">
+  <div class="modal-header">
+    <h1 class="modal-title fs-5" id="editLabel">Editar Carrera</h1>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    <p><strong>Tilde las opciones que va a actualizar.</strong></p>
+    <form action="/admin/careers/edit" method="post">  
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="txtId" value="{{course[0]}}">
+    <div class="mb-3">
+      <input type="checkbox" name="chkName" id="chkName" value="yes" style="margin: 0 3px;"><label for="txtName" class="form-label">Nombre</label>
+      <input type="text" name="txtName" id="txtName" placeholder="{{course[1]}}" class="form-control"  aria-describedby="helpId">
+    </div>
+    <div class="mb-3">
+      <input type="checkbox" name="chkCode" id="chkCode" value="yes" style="margin: 0 3px;"><label for="txtCode" class="form-label">Dirección</label>
+      <input type="number" name="txtCode" id="txtCode" class="form-control" aria-describedby="helpId" placeholder="{{course[2]}}">
+    </div>
+    <div class="mb-3">
+      <input type="checkbox" name="chkActive" id="chkActive" value="yes" style="margin: 0 3px;"><label for="txtActive" class="form-label">Estado</label>
+      <select class="form-select form-select-md" name="txtActive" id="txtActive">
+          <option value="1" selected>Habilitado</option>
+          <option value="0">No Habilitado</option>
+      </select>
+    </div>
+    
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+    <button type="submit" class="btn btn-primary">Guardar</button>
+  </div>
+</form>
+</div>
+</div>
+</div>
+<a class="btn btn-primary"  data-bs-toggle="modal" data-bs-target="#addStudent{{course[0]}}" role="button" onclick="resetAddStudent()">
+  +
+</a>
+<!-- Modal Nuevo Profesor -->
+<div class="modal fade" id="addStudent{{course[0]}}" tabindex="-1" aria-labelledby="editLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="editLabel">Agregar Estudiante</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-9">
+            <select class="form-select form-select-md" name="addStudent" id="addStudent">
+              <option value="" disabled selected value>Seleccionar</option>
+              {% for student in allStudents %}
+              <option value="{{student[9]}}">{{student[1]}}</option>
+              {% endfor %}
+              </select>
+          </div>
+          <div class="col-md-2">
+            <button class="btn btn-outline-success d-flex ms-auto order-5" id="btnAddStudent" onclick="addStudent()">Agregar</button>
+          </div>
+        </div>
+          <br>
+          
+          <form action="/admin/careers/edit" method="post" >  
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <div class="modal-body"  id="addStudentForm">  
+          </div>
+      </div>   
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </div>
+          </form>
+    </div>
+  </div>
+</div>
+
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+  </div>
+  
+
+  {% include 'user_admin/footer.html' %}

@@ -8,7 +8,7 @@
             {% endif %}
             {% if current_user.rol == 'aux' %}
             <a class="nav-item nav-link active" href="{{ url_for('user_aux') }}" aria-current="page">Home</span></a>
-            {% endif %}<a role="button" class="nav-item nav-link" data-bs-toggle="modal" data-bs-target="#exampleModal">Crear Profesores</a>
+            {% endif %}<a role="button" class="nav-item nav-link" data-bs-toggle="modal" data-bs-target="#exampleModal">Crear Estudiante</a>
           <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
           <p class="nav-item nav-link active"><strong> Current date and time: {{ moment().format('DD-MM-YYYY hh:mm:ss') }}</strong></p>
         </div>
@@ -21,26 +21,26 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Nuevo Profesor</h1>
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Nuevo Estudiante</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form action="/admin/teachers/save" method="post">  
+          <form action="/admin/students/save" method="post">  
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <div class="mb-3">
             <label for="txtFullname" class="form-label">Apellido y Nombre</label>
             <input type="text" name="txtFullname" id="txtFullname" class="form-control" aria-describedby="helpId" required>
             </div>
           <div class="mb-3">
-            <label for="txtCodeTeacher" class="form-label">Codigo <strong><span id="demoTeacher" style="color: orangered;"></span></strong></label>
-            <input type="number"  onfocus="maxCode()" name="txtCodeTeacher" id="txtCodeTeacher" class="form-control" aria-describedby="helpId" placeholder="código" required>
+            <label for="txtCodeStudent" class="form-label">Código<strong><span id="demoStudent" style="color: orangered;"></span></strong></label>
+            <input type="number"  onfocus="maxCode()" name="txtCodeStudent" id="txtCodeStudent" class="form-control" aria-describedby="helpId" placeholder="Ingrese código de estudiante" required>
           </div>
           <input type="hidden" name="" id="test" value="{{max_code}}">
           <script>
             function maxCode(){
               val = document.getElementById('test').value
               val = parseInt(val, 10) + 1
-              document.getElementById('demoTeacher').innerHTML = "(código sugerido "+ val + ")"
+              document.getElementById('demoStudent').innerHTML = "(código sugerido "+ val + ")"
             }
           </script>
           <div class="mb-3">
@@ -74,7 +74,6 @@
                  dateInput.value = moment().format('YYYY-MM-DD hh:mm:ss');
                  console.log(new Date().toISOString().split('T')[0]);
             </script>
-           <input type="hidden" name="txtRole" id="txtRole" class="form-control"  aria-describedby="helpId" value="teacher">
           <div class="mb-3">
             <label for="txtActive" class="form-label">Estado</label>
             <select class="form-select form-select-md" name="txtActive" id="txtActive" required>
@@ -86,7 +85,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-          <button type="submit" class="btn btn-primary">Guardar</button>
+          <button type="submit" class="btn btn-primary">Crear</button>
         </div>
     </form>
       </div>
@@ -94,22 +93,35 @@
   </div>
   
 <br>
+{% with messages = get_flashed_messages(with_categories=true) %}
+
+    {% if messages  %}
+    <br>
+    {% for category, message in messages %}
+    <div class="alert alert-{{category}} alert-dismissible fade show text-center" role="alert">
+        <strong>{{ message }}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
 <div class="row">
   <div class="col lg-2">
    
-    <form action="/admin/teachers" method="post">
+    <form action="/admin/students" method="post">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <select class="form-select form-select-md" onchange="filter()" name="txtFilter" id="txtFilter">
         <option value="" disabled selected value>Seleccionar</option>
-        <option value="0">Docente</option>
+        <option value="0">Estudiante</option>
         <option value="1">Habilitado</option>
         </select>
   </div> 
-  <div class="col lg-2" id="filterPerson" style="display:none ;">
-    <select class="form-select form-select-md" name="txtTeacherFilter" id="txtTeacherFilter">
+  <div class="col lg-2" id="filterStudent" style="display:none ;">
+    <select class="form-select form-select-md" name="txtStudentFilter" id="txtStudentFilter">
       <option value="" disabled selected value>Seleccionar</option>
-      {% for person in allPersons %}
-      <option value="{{person[10]}}">{{person[1]}}</option>
+      {% for student in allStudents %}
+      <option value="{{student[9]}}">{{student[1]}}</option>
       {% endfor %}
       </select>
   </div>
@@ -127,24 +139,24 @@
   <script>
     function filter(){
       var filterButton = document.getElementById('filterButton');
-      var filterPerson = document.getElementById('filterPerson');
+      var filterStudent = document.getElementById('filterStudent');
       var sel = document.getElementById('txtFilter');
       var val = sel.options[sel.selectedIndex].value;
        if (val == '0'){
-        if (filterPerson.style.display === 'none'){
-          filterPerson.style.display = 'inline-block';
+        if (filterStudent.style.display === 'none'){
+          filterStudent.style.display = 'inline-block';
           filterButton.style.display = 'inline-block';
           filterActive.style.display = 'none';
         }
         else {
-          filterPerson.style.display = 'none';
+          filterStudent.style.display = 'none';
         }
       }
       if (val == '1'){
         if (filterActive.style.display === 'none'){
           filterActive.style.display = 'inline-block';
           filterButton.style.display = 'inline-block';
-          filterPerson.style.display = 'none';
+          filterStudent.style.display = 'none';
         }
         else {
           filterActive.style.display = 'none';
@@ -171,7 +183,7 @@
     </nav>
   </div>
 </div> 
-<a name="" id="" class="btn btn-primary" href="{{ url_for('teachers_form')}}" role="button">Ver Todos</a> 
+<a name="" id="" class="btn btn-primary" href="{{ url_for('students_form')}}" role="button">Ver Todos</a> 
     <div class="table-responsive">
     <table class="table table-hover">
         <thead>
@@ -188,78 +200,87 @@
             </tr>
         </thead>
         <tbody>
-            {% for person in allPersons %}
+            {% for student in allStudents %}
             <tr class="">
-                <td scope="row">{{person[1]}}</td>
-                <td>{{person[10]}}</td>
-                <td>{{person[2]}}</td>
-                <td>{{person[3]}}</td>
-                <td>{{person[7]}}</td>
-                <td>{{person[5]}}</td>
-                <td>{{person[6]}}</td>
+                <td scope="row">{{student[1]}}</td>
+                <td>{{student[9]}}</td>
+                <td>{{student[3]}}</td>
+                <td>{{student[4]}}</td>
+                <td>{{student[2]}}</td>
+                <td>{{student[6]}}</td>
+                <td>{{student[5]}}</td>
                 
-                {% if person[11] == 1 %}
+                {% if student[10] == 1 %}
                 <td>Si</td>
                 {% endif %}
-                {% if person[11] != 1 %}
+                {% if student[10] != 1 %}
                 <td>No</td>
                 {% endif %}
                 <td>
-                    <a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete{{person[0]}}" role="button">
+                    <a class="btn btn-danger" onclick="resetForceDelete()" data-bs-toggle="modal" data-bs-target="#delete{{student[0]}}" role="button">
                         Eliminar
                     </a>
-                    <div class="modal fade" id="delete{{person[0]}}" tabindex="-1" aria-labelledby="editLabel" aria-hidden="true">
+                    <!-- Modal Eliminar Estudiante-->
+                    <div class="modal fade" id="delete{{student[0]}}" tabindex="-1" aria-labelledby="editLabel" aria-hidden="true">
                       <div class="modal-dialog">
                         <div class="modal-content">
                           <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="editLabel">Editar Profesor</h1>
+                            <h1 class="modal-title fs-5" id="editLabel">Eliminar Estudiante</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                           </div>
                           <div class="modal-body">
-                            <p><strong>Esta por eliminar a {{person[1]}}!</strong></p>
+                            <form action="/admin/students/delete" method="post">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <input type="checkbox" onclick="forceDelete()" name="chkDeleteStudent" id="chkDeleteStudent" value="yes" style="margin: 0 3px;"><label for="txtDeleteStudent" class="form-label">Eliminar de todas las clases.</label>
+                                <input type="hidden" name="txtId" value="{{student[0]}}">
+                                <input type="hidden" name="txtCode" value="{{student[9]}}">    
+                            <p><strong>Esta por eliminar a {{student[1]}}!</strong></p>
                           </div>
                           <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                            <a class="btn btn-primary" href="{{ url_for('delete_teachers',id=person[0])}}" role="button">Aceptar</a>
-                          </div>
+                             <a class="btn btn-primary" href="{{ url_for('delete_students',id=student[0],code=student[9])}}" role="button">Aceptar</a>
+                             <button class="btn btn-danger" style="display: none;" type="submit" id="btnDeleteStudent">Forzar</button>
+                            </form>
+                            </div>
+                           
                       </div>
                     </div>
                    </div> 
-                    <a class="btn btn-success"  data-bs-toggle="modal" data-bs-target="#edit{{person[0]}}" role="button">
+                    <a class="btn btn-success"  data-bs-toggle="modal" data-bs-target="#edit{{student[0]}}" role="button">
                       Editar
                   </a>
-                    <!-- Modal Nuevo Profesor -->
-<div class="modal fade" id="edit{{person[0]}}" tabindex="-1" aria-labelledby="editLabel" aria-hidden="true">
+                    <!-- Modal Editar Estudiante-->
+<div class="modal fade" id="edit{{student[0]}}" tabindex="-1" aria-labelledby="editLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="editLabel">Editar Profesor</h1>
+        <h1 class="modal-title fs-5" id="editLabel">Editar Estudiante</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <p><strong>Tilde las opciones que va a actualizar.</strong></p>
-        <form action="/admin/teachers/edit" method="post">  
+        <form action="/admin/students/edit" method="post">  
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-          <input type="hidden" name="txtId" value="{{person[0]}}">
+          <input type="hidden" name="txtId" value="{{student[0]}}">
         <div class="mb-3">
           <label for="txtFullname" class="form-label">Apellido y Nombre</label>
-          <input type="text" name="txtFullname" id="txtFullname" placeholder="{{person[1]}}" class="form-control"  aria-describedby="helpId" disabled>
+          <input type="text" name="txtFullname" id="txtFullname" placeholder="{{student[1]}}" class="form-control"  aria-describedby="helpId" disabled>
         </div>
         <div class="mb-3">
           <input type="checkbox" name="chkAddress" id="chkAddress" value="yes" style="margin: 0 3px;"><label for="txtAddress" class="form-label">Dirección</label>
-          <input type="text" name="txtAddress" id="txtAddress" class="form-control" aria-describedby="helpId" placeholder="{{person[2]}}">
+          <input type="text" name="txtAddress" id="txtAddress" class="form-control" aria-describedby="helpId" placeholder="{{student[3]}}">
         </div>
         <div class="mb-3">
           <input type="checkbox" name="chkCity" id="chkCity" value="yes" style="margin: 0 3px;"><label for="txtCity" class="form-label">Localidad</label>
-          <input type="text" name="txtCity" id="txtCity" class="form-control" aria-describedby="helpId" placeholder="{{person[3]}}">
+          <input type="text" name="txtCity" id="txtCity" class="form-control" aria-describedby="helpId" placeholder="{{student[4]}}">
         </div>
         <div class="mb-3">
           <input type="checkbox" name="chkPhoneNumber" id="chkPhoneNumber" value="yes" style="margin: 0 3px;"><label for="txtPhoneNumber" class="form-label">Teléfono</label>
-          <input type="text" name="txtPhoneNumber" id="txtPhoneNumber" class="form-control" aria-describedby="helpId" placeholder="{{person[6]}}">
+          <input type="text" name="txtPhoneNumber" id="txtPhoneNumber" class="form-control" aria-describedby="helpId" placeholder="{{student[5]}}">
         </div>
         <div class="mb-3">
           <input type="checkbox" name="chkEmail" id="chkEmail" value="yes" style="margin: 0 3px;"><label for="txtEmail" class="form-label">Correo electrónico</label>
-          <input type="text" name="txtEmail" id="txtEmail" class="form-control" aria-describedby="helpId" placeholder="{{person[7]}}">
+          <input type="text" name="txtEmail" id="txtEmail" class="form-control" aria-describedby="helpId" placeholder="{{student[2]}}">
         </div>
         <div class="mb-3">
           <input type="checkbox" name="chkActive" id="chkEmail" value="yes" style="margin: 0 3px;"><label for="txtActive" class="form-label">Estado</label>

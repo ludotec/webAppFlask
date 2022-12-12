@@ -3,7 +3,13 @@
 <header>
     <nav class="navbar navbar-expand navbar-light bg-light">
         <div class="nav navbar-nav">
+            {% if current_user.rol == 'admin' %}
             <a class="nav-item nav-link active" href="{{ url_for('user_admin') }}" aria-current="page">Home</span></a>
+            {% endif %}
+            {% if current_user.rol == 'aux' %}
+            <a class="nav-item nav-link active" href="{{ url_for('user_aux') }}" aria-current="page">Home</span></a>
+            {% endif %}
+            
             <a role="button" class="nav-item nav-link" data-bs-toggle="modal" data-bs-target="#exampleModal">Crear Carrera</a>
             <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
           </div>

@@ -28,8 +28,61 @@
            return False;             
          }              
      }
-     
-    </script>
+     function myResetFunction() {
+        document.getElementById("formChPass").reset();
+        document.getElementById('error').style.display = 'none';
+      }
+      function verificarPasswords() {
+      pass1 = document.getElementById('pass1');
+      pass2 = document.getElementById('pass2');
+      if (pass1.value != pass2.value){
+        document.getElementById('error').style.display = 'block';
+        return false;
+      }
+      else {
+        document.getElementById('error').style.display = 'none';
+        document.getElementById("ok").style.display= 'block';
+        document.getElementById("login").setAttribute('disabled', '');
+        return true;
+      }
+    }
+    function forceDelete() {
+      inputCheck = document. getElementById('chkDeleteStudent');
+
+      if (inputCheck.checked) {
+        document.getElementById('btnDeleteStudent').style.display = 'block'
+      }else{
+        document.getElementById('btnDeleteStudent').style.display = 'none'
+      }
+
+    }
+    function resetForceDelete() {
+        document.getElementById("chkDeleteStudent").reset();
+        document.getElementById('btnDeleteStudent').style.display = 'none';
+      }
+
+    function addStudent() {
+      const formStudent = document.getElementById('addStudentForm');
+      const addStudent = document.getElementById('addStudent').value;
+      const newDiv = document.createElement('div');
+      newDiv.classList.add('mb-3')
+      var newInput = document.createElement('input');
+      newInput.classList.add('form-control')
+      newInput.setAttribute('type', 'text');
+      newInput.value = addStudent;
+      newDiv.appendChild(newInput)
+      formStudent.appendChild(newDiv);
+    }
+    
+    function resetAddStudent() {
+      const formStudent = document.getElementById('addStudentForm');
+      var child = formStudent.lastElementChild;
+        while (child) {
+        formStudent.removeChild(child);
+        child = formStudent.lastElementChild;
+      }
+    }
+     </script>
     
     {% endblock %}
 

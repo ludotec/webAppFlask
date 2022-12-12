@@ -18,12 +18,19 @@
 </head>
 
 <body>
-<div class="container">
+  {% block body %}
     <header>
         <nav class="navbar navbar-expand navbar-light bg-light">
             <div class="nav navbar-nav">
                 <a class="nav-item nav-link active" href="#" aria-current="page">Home</span></a>
                 <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
+                
+            </div>
+            <div class="h-100 p-1 text-white bg-primary border rounded-3 d-flex ms-auto order-5" style="margin-right:20px;">
+              <h5 style="padding-inline: 20px;">Bienvenido, {{ current_user.fullname }}</h5>
             </div>
         </nav>
     </header>
+    <br>
+
+  {% endblock  %}

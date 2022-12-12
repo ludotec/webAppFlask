@@ -8,13 +8,13 @@ class ModelUser():
         try:
             con=db.connect()
             cursor = con.cursor()
-            sql="""SELECT id, username, password, fullname FROM user
+            sql="""SELECT id, username, password, fullname , code FROM user
                     WHERE username = '{}'""".format(user.username)
             cursor.execute(sql)
             row=cursor.fetchone()
             con.commit()
             if row != None:
-                user=User(row[0],row[1],User.check_password(row[2],user.password),row[3])
+                user=User(row[0],row[1],User.check_password(row[2],user.password),row[3],None,row[4])
                 return user
             else:
                 return None
@@ -26,12 +26,15 @@ class ModelUser():
         try:
             con=db.connect()
             cursor = con.cursor()
-            sql="SELECT id, username, fullname FROM user WHERE id = '{}'".format(id)
+            sql="""SELECT user.id, username, fullname, rol.rol_nombre FROM user
+            INNER JOIN user_rol ON user_rol.user_id = user.id
+            INNER JOIN rol ON rol.id = user_rol.rol_id
+            WHERE user.id = '{}'""".format(id)
             cursor.execute(sql)
             row=cursor.fetchone()
             con.commit()
             if row != None:
-                return User(row[0],row[1],None,row[2])
+                return User(row[0],row[1],None,row[2],row[3])
             else:
                 return None
         except Exception as ex:
@@ -78,7 +81,7 @@ class ModelUser():
             raise Exception(ex)
 
     @classmethod
-    def create(self, db, username, password, fullname, rol):
+    def create(self, db, username, password, fullname, rol, code):
         hashed_password=generate_password_hash(password)
         match rol:
             case 'admin':
@@ -96,8 +99,8 @@ class ModelUser():
             row=cursor.fetchone()
             if row != None:
                 lastId = row[0] + 1
-            sql_create_user="INSERT INTO user (id, username, password, fullname) VALUES (%s, %s, %s, %s)"
-            datos=(lastId,username, hashed_password, fullname)
+            sql_create_user="INSERT INTO user (id, username, password, fullname, code) VALUES (%s, %s, %s, %s, %s)"
+            datos=(lastId,username, hashed_password, fullname, code)
             cursor.execute(sql_create_user, datos)
             sql_rol_id="INSERT INTO user_rol (rol_id,user_id) VALUES ({}, {})".format(rol_id, lastId )
             cursor.execute(sql_rol_id)
@@ -123,6 +126,18 @@ class ModelUser():
         except Exception as ex:
             raise Exception(ex)
 
+    @classmethod
+    def edit(self, db, newPass, id):
+        hashed_password=generate_password_hash(newPass)
+        try:
+            con=db.connect()
+            cursor = con.cursor()
+            sql = "UPDATE `user` SET `password`='{}' WHERE `id`={} ".format(hashed_password, id)
+            cursor.execute(sql)
+            con.commit()
+        except Exception as ex:
+            raise Exception(ex)
+        
     @classmethod
     def delete(self, db, id):
         try:
