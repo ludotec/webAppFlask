@@ -1,16 +1,16 @@
 {% include 'user_admin/header_forms.html' %}
 {{ moment.include_moment() }}
 <header>
-    <nav class="navbar navbar-expand navbar-light bg-light">
+    <nav class="navbar navbar-expand navbar-dark bg-primary">
         <div class="nav navbar-nav">
           {% if current_user.rol == 'admin' %}
-          <a class="nav-item nav-link active" href="{{ url_for('user_admin') }}" aria-current="page">Home</span></a>
+          <a class="nav-item nav-link active" href="{{ url_for('user_admin') }}" aria-current="page">Inicio</span></a>
           {% endif %}
           {% if current_user.rol == 'aux' %}
-          <a class="nav-item nav-link active" href="{{ url_for('user_aux') }}" aria-current="page">Home</span></a>
+          <a class="nav-item nav-link active" href="{{ url_for('user_aux') }}" aria-current="page">Inicio</span></a>
           {% endif %}<a role="button" class="nav-item nav-link" data-bs-toggle="modal" data-bs-target="#exampleModal">Crear Materias</a>
-            <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
-            <p class="nav-item nav-link active"><strong> Current date and time: {{ moment().format('DD-MM-YYYY hh:mm:ss') }}</strong></p>
+            <a class="nav-item nav-link" href="{{ url_for('logout') }}">Salir</a>
+            <p class="nav-item nav-link active"><strong> Dia y hora actual: {{ moment().format('DD-MM-YYYY hh:mm:ss') }}</strong></p>
           </div>
 
           
@@ -22,7 +22,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Crear Materia</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -55,7 +55,7 @@
             document.getElementById('demo').innerHTML = "(debe estar entre "+val+ " y "+valSup+ ")"
             }
           </script>
-          <div class="mb-3">
+          <!-- <div class="mb-3">
             <label for="txtTeacher" class="form-label">Docente</label>
             <select class="form-select form-select-md" name="txtTeacher" id="txtTeacher">
             <option value="{{allPersons[0][10]}}" selected>{{allPersons[0][1]}}</option>
@@ -63,7 +63,7 @@
             <option value="{{person[10]}}">{{person[1]}}</option>
             {% endfor %}
             </select>
-          </div>
+          </div> -->
          <!-- <div class="mb-3">
             <label for="txtCareerFrom" class="form-label">Carrera</label>
             <input type="text" name="txtCareerFrom" id="txtCareerFrom" class="form-control" aria-describedby="helpId" required>
@@ -117,7 +117,7 @@
             <option value="" disabled selected value>Seleccionar</option>
             <option value="0">Materia</option>
             <option value="1">Carrera</option>
-            <option value="2">Docente</option>
+            <!-- <option value="2">Docente</option> -->
             <option value="3">Habilitado</option>
             </select>
       </div> 
@@ -218,7 +218,7 @@
         
       </script>
       <div class="col lg-6">
-        <nav aria-label="Page navigation example">
+        <!-- <nav aria-label="Page navigation example">
           <ul class="pagination justify-content-end">
             <li class="page-item disabled">
               <a class="page-link">Previous</a>
@@ -230,9 +230,10 @@
               <a class="page-link" href="#">Next</a>
             </li>
           </ul>
-        </nav>
+        </nav> -->
       </div>
     </div>
+    <br>
   <a name="" id="" class="btn btn-primary" href="{{ url_for('signatures_form')}}" role="button">Ver Todos</a>
   <div class="table-responsive">
     <table class="table table-striped">
@@ -241,7 +242,7 @@
                 <th scope="col">Nombre</th>
                 <th scope="col">Cód. Materia </th>
                 <th scope="col">Carrera</th>
-                <th scope="col">Docente</th>
+                <!-- <th scope="col">Docente</th> -->
                 <th scope="col">Habilitado</th>
                 <th scope="col">Acciones</th>
             </tr>
@@ -252,7 +253,7 @@
                 <td scope="row">{{signature[1]}}</td>
                 <td>{{signature[2]}}</td>
                 <td>{{signature[3]}}</td>
-                <td>{{signature[4]}}</td>
+                <!-- <td>{{signature[4]}}</td> -->
                 {% if signature[6] == 1 %}
                 <td>Si</td>
                 {% endif %}
@@ -304,7 +305,7 @@
       <input type="checkbox" name="chkCode" id="chkCode" value="yes" style="margin: 0 3px;"><label for="txtCode" class="form-label">Código</label>
       <input type="text" name="txtCode" id="txtCode" placeholder="{{signature[2]}}" class="form-control"  aria-describedby="helpId">
     </div>
-    <div class="mb-3">
+    <!-- <div class="mb-3">
       <input type="checkbox" name="chkTeacher" id="chkTeacher" value="yes" style="margin: 0 3px;"><label for="txtTeacher" class="form-label">Docente</label>
             <select class="form-select form-select-md" name="txtTeacher" id="txtTeacher">
             <option value="{{signature[7]}}" selected>{{signature[4]}}</option>
@@ -314,7 +315,7 @@
             {% endif %}
             {% endfor %}
             </select>
-    </div>
+    </div> -->
     <div class="mb-3">
       <input type="checkbox" name="chkCareerFrom" id="chkCareerFrom" value="yes" style="margin: 0 3px;"><label for="txtCareerFrom" class="form-label">Carrera</label>
       <select class="form-select form-select-md" name="txtCareerFrom" id="txtCareerFrom">

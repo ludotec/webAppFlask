@@ -1,13 +1,13 @@
 {% include 'user_admin/header_forms.html' %}
 {{ moment.include_moment() }}
 <header>
-    <nav class="navbar navbar-expand navbar-light bg-light">
+    <nav class="navbar navbar-expand navbar-dark bg-primary">
         <div class="nav navbar-nav">
             {% if current_user.rol == 'admin' %}
-            <a class="nav-item nav-link active" href="{{ url_for('user_admin') }}" aria-current="page">Home</span></a>
+            <a class="nav-item nav-link active" href="{{ url_for('user_admin') }}" aria-current="page">Inicio</span></a>
             {% endif %}
             {% if current_user.rol == 'aux' %}
-            <a class="nav-item nav-link active" href="{{ url_for('user_aux') }}" aria-current="page">Home</span></a>
+            <a class="nav-item nav-link active" href="{{ url_for('user_aux') }}" aria-current="page">Inicio</span></a>
             {% endif %}
             
             <a role="button" class="nav-item nav-link" data-bs-toggle="modal" data-bs-target="#exampleModal">Crear Clase</a>
@@ -22,7 +22,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Crear Clase</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -169,10 +169,11 @@
 </div>
 </div>
 </div>
-<a class="btn btn-primary"  data-bs-toggle="modal" data-bs-target="#addStudent{{course[0]}}" role="button" onclick="resetAddStudent()">
+<a class="btn btn-primary"  data-bs-toggle="modal" data-bs-target="#addStudent{{course[0]}}" role="button">
   +
 </a>
-<!-- Modal Nuevo Profesor -->
+
+<!-- Modal Agregar Alumnos a clase -->
 <div class="modal fade" id="addStudent{{course[0]}}" tabindex="-1" aria-labelledby="editLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -181,25 +182,55 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <div class="row">
-          <div class="col-md-9">
-            <select class="form-select form-select-md" name="addStudent" id="addStudent">
-              <option value="" disabled selected value>Seleccionar</option>
-              {% for student in allStudents %}
-              <option value="{{student[9]}}">{{student[1]}}</option>
-              {% endfor %}
-              </select>
-          </div>
-          <div class="col-md-2">
-            <button class="btn btn-outline-success d-flex ms-auto order-5" id="btnAddStudent" onclick="addStudent()">Agregar</button>
-          </div>
-        </div>
-          <br>
-          
-          <form action="/admin/careers/edit" method="post" >  
+          <form action="/admin/class/add" method="post" id="myForm">  
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-          <div class="modal-body"  id="addStudentForm">  
-          </div>
+            <input type="hidden" name="txtIdCourse" value="{{course[0]}}">
+            <div class="mb-3">
+              <label for="txtStuden1">Estudiante 1</label>
+              <select class="form-select form-select-md" name="txtStudent1" id="addStudent">
+                <option disabled selected value>Seleccionar</option>
+                {% for student in allStudents %}
+                <option value="{{student[9]}}">{{student[1]}}</option>
+                {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+              <label for="txtStuden2">Estudiante 2</label>
+              <select class="form-select form-select-md" name="txtStudent2" id="addStudent">
+                <option disabled selected value>Seleccionar</option>
+                {% for student in allStudents %}
+                <option value="{{student[9]}}">{{student[1]}}</option>
+                {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+              <label for="txtStuden3">Estudiante 3</label>
+              <select class="form-select form-select-md" name="txtStudent3" id="addStudent">
+                <option disabled selected value>Seleccionar</option>
+                {% for student in allStudents %}
+                <option value="{{student[9]}}">{{student[1]}}</option>
+                {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+              <label for="txtStuden4">Estudiante 4</label>
+              <select class="form-select form-select-md" name="txtStudent4" id="addStudent">
+                <option disbaled selected value>Seleccionar</option>
+                {% for student in allStudents %}
+                <option value="{{student[9]}}">{{student[1]}}</option>
+                {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+              <label for="txtStuden5">Estudiante 5</label>
+              <select class="form-select form-select-md" name="txtStudent5" id="addStudent">
+                <option disabled selected value>Seleccionar</option>
+                {% for student in allStudents %}
+                <option value="{{student[9]}}">{{student[1]}}</option>
+                {% endfor %}
+                </select>
+            </div>
+          
       </div>   
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -209,6 +240,7 @@
     </div>
   </div>
 </div>
+
 
                 </td>
             </tr>

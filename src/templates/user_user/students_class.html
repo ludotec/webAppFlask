@@ -1,0 +1,134 @@
+{% include 'user_user/header.html' %}
+{% block body %}
+    <header>
+        <nav class="navbar navbar-expand navbar-dark bg-primary">
+            <div class="nav navbar-nav">
+                <a class="nav-item nav-link active" href="{{ url_for('user_user') }}" aria-current="page">Inicio</span></a>
+                <a class="nav-item nav-link" href="{{ url_for('logout') }}">Salir</a>
+                
+            </div>
+        </nav>
+    </header>
+    <br>
+
+  {% endblock  %}
+
+<div class="container">
+    <div class="row">    
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Correo elect.</th>
+                        <th scope="col">Materia</th>
+                        <th scope="col">Cal. Parciales</th>
+                        <th scope="col">Cal. Final</th>
+                        <th scope="col">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s_in_class in allStudentsInClass  %}
+                    <tr class="">
+                        <td scope="row">{{s_in_class[1]}}</td>
+                        <td>{{s_in_class[2]}}</td>
+                        <td>{{s_in_class[3]}}</td>
+                        {% if s_in_class[7] == None %}
+                        {% set q_1 = 'S/C' %}
+                        {% else %}
+                        {% set q_1 = s_in_class[7] %}
+                        {% endif %}
+                        {% if s_in_class[8] == None %}
+                        {% set q_2 = 'S/C' %}
+                        {% else %}
+                        {% set q_2 = s_in_class[8] %}
+                        {% endif %}
+                        {% if s_in_class[9] == None %}
+                        {% set q_3 = 'S/C' %}
+                        {% else %}
+                        {% set q_3 = s_in_class[9] %}
+                        {% endif %}
+                        <td>P1={{q_1}} - P2={{q_2}} - P3= {{q_3}}</td>
+                        {% if s_in_class[10] == None %}
+                        {% set q_final = 'S/C' %}
+                        {% else %}
+                        {% set q_final = s_in_class[10] %}
+                        {% endif %}
+                            <td>Final = {{q_final}}</td>
+                        
+                        <td>
+                            <a class="btn btn-success" data-bs-toggle="modal" data-bs-target="#delete{{s_in_class[0]}}" role="button">
+                                Calificar
+                            </a>
+                            <div class="modal fade" id="delete{{s_in_class[0]}}" tabindex="-1" aria-labelledby="editLabel" aria-hidden="true">
+                              <div class="modal-dialog">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="editLabel">Cargar Notas</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                  </div>
+                                  <div class="modal-body">
+                                    <form action="/users/qualify" method="post">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <input type="hidden" name="txtIdSubject" value="{{ s_in_class[4] }}">
+                                        <input type="hidden" name="txtIdStudent" value="{{ s_in_class[5] }}">
+                                        <input type="hidden" name="txtIdClass" value="{{ s_in_class[6] }}">
+                                   <div class="mb-3">
+                                    <label for="txtParcial1" class="form-label">Parcial 1</label>
+                                    <select class="form-select form-select-lg" name="txtParcial1" id="txtParcial1">
+                                        <option disabled selected value>Seleccionar calificación del 1 al 10</option>
+                                        {% for n in range(1, 11) %}
+                                        <option value="{{n}}">{{n}}</option>
+                                        {% endfor %}
+                                    </select>
+                                   </div>
+                                   <div class="mb-3">
+                                    <label for="txtParcial2" class="form-label">Parcial 2</label>
+                                    <select class="form-select form-select-lg" name="txtParcial2" id="txtParcial2">
+                                        <option disabled selected value>Seleccionar calificación del 1 al 10</option>
+                                        {% for n in range(1, 11) %}
+                                        <option value="{{n}}">{{n}}</option>
+                                        {% endfor %}
+                                    </select>
+                                   </div>
+                                   <div class="mb-3">
+                                    <label for="txtParcial3" class="form-label">Parcial 3</label>
+                                    <select class="form-select form-select-lg" name="txtParcial3" id="txtParcial3">
+                                        <option disabled selected value>Seleccionar calificación del 1 al 10</option>
+                                        {% for n in range(1, 11) %}
+                                        <option value="{{n}}">{{n}}</option>
+                                        {% endfor %}
+                                    </select>
+                                   </div>
+                                   <div class="mb-3">
+                                    <label for="txtFinal" class="form-label">Nota Final</label>
+                                    <select class="form-select form-select-lg" name="txtFinal" id="txtFinal">
+                                        <option disabled selected value>Seleccionar calificación del 1 al 10</option>
+                                        {% for n in range(1, 11) %}
+                                        <option value="{{n}}">{{n}}</option>
+                                        {% endfor %}
+                                    </select>
+                                   </div>
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                    <button type="submit" class="btn btn-success" >Enviar</button>
+                                </div>
+                                </form>
+                              </div>
+                            </div>
+                           </div> 
+                            
+          </form>
+            </div>
+          </div>
+        </div>
+        
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+          </div>
+        </div>
+{% include 'user_user/footer.html' %}

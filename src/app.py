@@ -1,8 +1,10 @@
 from functools import wraps
-from flask import Flask, render_template, request, redirect, url_for, flash, abort, session
+from flask import Flask, render_template, request, redirect, url_for, flash, abort, session, send_from_directory
 from flaskext.mysql import MySQL
 from flask_wtf.csrf import CSRFProtect
 from flask_login import LoginManager, login_user, logout_user,login_required
+import os
+
 
 # third part
 from flask_moment import Moment
@@ -57,9 +59,7 @@ def index():
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method=='POST':
-        # print(request.form['username'])
-        # print(request.form['password'])
-        user = User(0,request.form['username'],request.form['password'])
+        user = User(0,request.form['username'].strip(),request.form['password'])
         logged_user=ModelUser.login(db, user)
         logged_user_rol_id=ModelUser.get_by_role_id(db, user.username)
         if logged_user != None:
@@ -102,14 +102,6 @@ def user_admin():
 def user_aux():
     return render_template('user_aux/index.html')
 
-@app.route('/users')
-@login_required
-@check_role(['user'])
-def user_user():
-    _code= session.get('code')
-    print(str(_code))
-    assignedSub = ModelSignature.get_subject(db, _code)
-    return render_template('user_user/index.html', assignedSub=assignedSub)
 
 @app.route('/admin/users')
 @login_required
@@ -512,10 +504,12 @@ def class_form():
     allPersons = ModelPerson.get_all(db)
     allCourses = ModelCourse.get_all(db)
     allStudents=ModelStudent.get_all(db)
-    maxCode = 0
+    max_temp_code = 0
     for course in allCourses:
-        if course[0] > maxCode:
-            maxCode = course[0] + 1
+        if course[0] > max_temp_code:
+            max_temp_code = course[0]
+            maxCode = course[0] +1
+            
     return render_template('user_admin/class.html', allCareers=allCareers, allPersons=allPersons, allSubjects=allSubjects, allCourses=allCourses, maxCode=maxCode, allStudents=allStudents)
 
 @app.route('/admin/class/save', methods=['POST'])
@@ -534,6 +528,88 @@ def save_course():
         flash(u"La clase no se ha creado. Verificar código de clase", 'danger')
         return redirect(url_for('class_form'))
 
+@app.route('/admin/class/add', methods=['POST'])
+@login_required
+@check_role(['admin','aux'])
+def add_student():
+    _id_course = request.form['txtIdCourse']
+    _student_ok = []
+    if request.form.get('txtStudent1'):
+        _student1 = request.form['txtStudent1']
+        print(_student1)
+        if ModelCourse.get_by_class(db, _student1, _id_course ) == None:
+            if _student1 != "":
+               _student_ok.append(_student1)
+            else:
+                flash(u"Hay algo mal en su listado, verificar. No se cargó ningún estudiante.", 'danger')
+                return redirect(url_for('class_form'))
+        else:
+            flash(u"Hay algo mal en su listado, verificar. No se cargó ningún estudiante.", 'danger')
+            return redirect(url_for('class_form'))
+    else: _student1 = ""
+    if request.form.get('txtStudent2'):    
+        _student2 = request.form['txtStudent2']
+        print(_student2)
+        if ModelCourse.get_by_class(db, _student2, _id_course ) == None:
+            if _student2 != "" and _student2 != _student1:
+                _student_ok.append(_student2)
+            else:
+                flash(u"Hay algo mal en su listado, verificar. No se cargó ningún estudiante.", 'danger')
+                return redirect(url_for('class_form'))
+        else:
+            flash(u"Hay algo mal en su listado, verificar. No se cargó ningún estudiante.", 'danger')
+            return redirect(url_for('class_form'))
+    else: _student2 = ""
+    if request.form.get('txtStudent3'):
+        _student3 = request.form['txtStudent3']
+        print(_student3)
+        if ModelCourse.get_by_class(db, _student3, _id_course ) == None:
+            if _student3 != "" and _student3 != _student2 and _student3 != _student1:
+                _student_ok.append(_student3)
+            else:
+                flash(u"Hay algo mal en su listado, verificar. No se cargó ningún estudiante.", 'danger')
+                return redirect(url_for('class_form'))
+        else:
+            flash(u"Hay algo mal en su listado, verificar. No se cargó ningún estudiante.", 'danger')
+            return redirect(url_for('class_form'))
+    else: _student3 = ""
+    if request.form.get('txtStudent4'):
+        _student4 = request.form['txtStudent4']
+        print(_student4)
+        if ModelCourse.get_by_class(db, _student4, _id_course ) == None:
+            if _student4 != "" and _student4 != _student3 and _student4 != _student2 and _student4 != _student1:
+                _student_ok.append(_student4)
+            else:
+                flash(u"Hay algo mal en su listado, verificar. No se cargó ningún estudiante.", 'danger')
+                return redirect(url_for('class_form'))
+        else:
+            flash(u"Hay algo mal en su listado, verificar. No se cargó ningún estudiante.", 'danger')
+            return redirect(url_for('class_form'))
+    else: _student4 = ""
+    if request.form.get('txtStudent5'):
+        _student5 = request.form['txtStudent5']
+        print(_student5)
+        if ModelCourse.get_by_class(db, _student5, _id_course ) == None:
+            if _student5 != "" and _student5 != _student4 and _student5 != _student3 and _student5 != _student2 and _student5 != _student1:
+                _student_ok.append(_student5)
+            else:
+                flash(u"Hay algo mal en su listado, verificar. No se cargó ningún estudiante.", 'danger')
+                return redirect(url_for('class_form'))
+        else:
+            flash(u"Hay algo mal en su listado, verificar. No se cargó ningún estudiante.", 'danger')
+            return redirect(url_for('class_form'))
+    if len(_student_ok) > 0:
+        for _id_student_ok in _student_ok:
+            print(_id_student_ok)
+            ModelCourse.add_student(db, _id_student_ok, _id_course )
+    else:
+        flash(u"Hay algo mal en su listado, verificar. No se cargó ningún estudiante.", 'danger')
+        return redirect(url_for('class_form'))
+    flash(u"Se agregaron todos los estudiantes a la clase con éxito.", 'success')
+    return redirect(url_for('class_form'))
+        
+
+
 @app.route('/admin/class/delete/<id>', methods=['GET','POST'])
 @login_required
 @check_role(['admin','aux'])
@@ -541,6 +617,66 @@ def delete_course(id):
     ModelCourse.delete(db, id)
     return redirect(url_for('class_form'))
 
+@app.route('/users')
+@login_required
+@check_role(['user'])
+def user_user():
+    _code= session.get('code')
+    print(str(_code))
+    assignedSub = ModelSignature.get_subject(db, _code)
+    return render_template('user_user/index.html', assignedSub=assignedSub)
+
+@app.route('/users/download/report/pdf')
+@login_required
+@check_role(['user'])
+def download_report():
+    _code= session.get('code')
+    response = ModelSignature.get_report(db, _code)
+    return response
+
+@app.route('/users/qualify', methods=['POST'])
+@login_required
+@check_role(['user'])
+def student_qualify():
+    _id_subject = request.form['txtIdSubject']
+    print(_id_subject)
+    _id_student = request.form['txtIdStudent']
+    print(_id_student)
+    _id_class = request.form['txtIdClass']
+    print(_id_class)
+    if request.form.get('txtParcial1'):
+        _student_q1 = request.form['txtParcial1']
+        _q_number = 1
+        print(_student_q1)
+        ModelStudent.set_qualify(db, _q_number,_id_student , _id_class, _student_q1)
+    if request.form.get('txtParcial2'):
+        _student_q2 = request.form['txtParcial2']
+        _q_number = 2
+        print(_student_q2)
+        ModelStudent.set_qualify(db, _q_number, _id_student , _id_class, _student_q2)
+    if request.form.get('txtParcial3'):
+        _student_q3 = request.form['txtParcial3']
+        _q_number = 3
+        print(_student_q3)
+        ModelStudent.set_qualify(db,  _q_number, _id_student , _id_class, _student_q3)
+    if request.form.get('txtFinal'):
+        _student_q_final = request.form['txtFinal']
+        _q_number = 4
+        print(_student_q_final)
+        ModelStudent.set_qualify(db,  _q_number, _id_student , _id_class, _student_q_final)
+    return redirect(url_for('student_class', id=_id_subject))
+
+@app.route('/users/student/<id>')
+@login_required
+@check_role(['admin','user'])
+def student_class(id):
+    _code= session.get('code')
+    allStudentsInClass=ModelStudent.get_all_student_in_class(db, id, _code)
+    return render_template('user_user/students_class.html', allStudentsInClass=allStudentsInClass)
+
+@app.route("/css/<filecss>")
+def css_link(filecss):
+    return send_from_directory(os.path.join('./static/css'), filecss)
 
 def status_401(error):
     return redirect(url_for('login'))

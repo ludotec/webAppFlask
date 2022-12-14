@@ -8,8 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   <!-- Bootstrap CSS v5.2.1 -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+  <link href="/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
   <!-- Custom CSS -->
   {% block customCSS %}
   
@@ -60,28 +59,7 @@
         document.getElementById("chkDeleteStudent").reset();
         document.getElementById('btnDeleteStudent').style.display = 'none';
       }
-
-    function addStudent() {
-      const formStudent = document.getElementById('addStudentForm');
-      const addStudent = document.getElementById('addStudent').value;
-      const newDiv = document.createElement('div');
-      newDiv.classList.add('mb-3')
-      var newInput = document.createElement('input');
-      newInput.classList.add('form-control')
-      newInput.setAttribute('type', 'text');
-      newInput.value = addStudent;
-      newDiv.appendChild(newInput)
-      formStudent.appendChild(newDiv);
-    }
-    
-    function resetAddStudent() {
-      const formStudent = document.getElementById('addStudentForm');
-      var child = formStudent.lastElementChild;
-        while (child) {
-        formStudent.removeChild(child);
-        child = formStudent.lastElementChild;
-      }
-    }
+      
      </script>
     
     {% endblock %}

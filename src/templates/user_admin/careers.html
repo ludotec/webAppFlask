@@ -1,28 +1,28 @@
 {% include 'user_admin/header_forms.html' %}
 {{ moment.include_moment() }}
 <header>
-    <nav class="navbar navbar-expand navbar-light bg-light">
+    <nav class="navbar navbar-expand navbar-dark bg-primary">
         <div class="nav navbar-nav">
             {% if current_user.rol == 'admin' %}
-            <a class="nav-item nav-link active" href="{{ url_for('user_admin') }}" aria-current="page">Home</span></a>
+            <a class="nav-item nav-link active" href="{{ url_for('user_admin') }}" aria-current="page">Inicio</span></a>
             {% endif %}
             {% if current_user.rol == 'aux' %}
-            <a class="nav-item nav-link active" href="{{ url_for('user_aux') }}" aria-current="page">Home</span></a>
+            <a class="nav-item nav-link active" href="{{ url_for('user_aux') }}" aria-current="page">Inicio</span></a>
             {% endif %}
             
             <a role="button" class="nav-item nav-link" data-bs-toggle="modal" data-bs-target="#exampleModal">Crear Carrera</a>
-            <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
+            <a class="nav-item nav-link" href="{{ url_for('logout') }}">Salir</a>
+            <p class="nav-item nav-link active"><strong> Dia y hora actual: {{ moment().format('DD-MM-YYYY hh:mm:ss') }}</strong></p>
           </div>
     </nav>
 </header>
 <div class="container">
-  <p>Current date and time: {{ moment().format('YYYY-MM-DD hh:mm:ss') }}</p>
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Crear Carrera</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">

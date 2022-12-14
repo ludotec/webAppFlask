@@ -8,8 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   <!-- Bootstrap CSS v5.2.1 -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+  <link href="/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
   <!-- Custom CSS -->
   {% block customCSS %}
   
@@ -19,18 +18,5 @@
 
 <body>
   {% block body %}
-    <header>
-        <nav class="navbar navbar-expand navbar-light bg-light">
-            <div class="nav navbar-nav">
-                <a class="nav-item nav-link active" href="#" aria-current="page">Home</span></a>
-                <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
-                
-            </div>
-            <div class="h-100 p-1 text-white bg-primary border rounded-3 d-flex ms-auto order-5" style="margin-right:20px;">
-              <h5 style="padding-inline: 20px;">Bienvenido, {{ current_user.fullname }}</h5>
-            </div>
-        </nav>
-    </header>
-    <br>
-
+  
   {% endblock  %}

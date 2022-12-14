@@ -1,7 +1,26 @@
 {% include 'user_user/header.html' %}
+{% block body %}
+    <header>
+        <nav class="navbar navbar-expand navbar-dark bg-primary">
+            <div class="nav navbar-nav">
+                <a class="nav-item nav-link active" href="#" aria-current="page">Inicio</span></a>
+                <a class="nav-item nav-link" href="{{ url_for('logout') }}">Salir</a>
+                
+            </div>
+            <div class="h-100 p-1 text-white bg-primary border rounded-3 d-flex ms-auto order-5" style="margin-right:20px;">
+              <h5 style="padding-inline: 20px;">{{ current_user.fullname }}</h5>
+            </div>
+        </nav>
+    </header>
+    <br>
+
+  {% endblock  %}
 <div class="container">
     <br>
-    <div class="row">    
+    <p>
+      <a class="btn btn-warning" href="{{ url_for('download_report') }}" target="_blank" role="button">Generar Reporte</a>
+    </p>
+    <!-- <div class="row">    
     <div class="col lg-6">
         <nav aria-label="Page navigation example">
           <ul class="pagination justify-content-end">
@@ -17,8 +36,7 @@
           </ul>
         </nav>
       </div>
-    </div> 
-    <a name="" id="" class="btn btn-primary" href="{{ url_for('teachers_form')}}" role="button">Ver Todos</a> 
+    </div> --> 
 </div>
 </div>
 <div class="container">
@@ -38,32 +56,10 @@
                     <td scope="row">{{subject[1]}}</td>
                     <td>{{subject[2]}}</td>
                     <td>
-                        <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#delete{{subject[0]}}" role="button">
+                        <a class="btn btn-success" href="{{ url_for('student_class',id=subject[3])}}" role="button">
                             Ver Alumnos
                         </a>
-                        <div class="modal fade" id="delete{{subject[0]}}" tabindex="-1" aria-labelledby="editLabel" aria-hidden="true">
-                          <div class="modal-dialog">
-                            <div class="modal-content">
-                              <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="editLabel">Editar Profesor</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                              </div>
-                              <div class="modal-body">
-                                <p><strong>Esta por eliminar a {{subject[1]}}!</strong></p>
-                              </div>
-                              <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                                <a class="btn btn-primary" href="{{ url_for('delete_teachers',id=subject[0])}}" role="button">Aceptar</a>
-                              </div>
-                          </div>
-                        </div>
-                       </div> 
                         
-      </form>
-        </div>
-      </div>
-    </div>
-    
                     </td>
                 </tr>
                 {% endfor %}

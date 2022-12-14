@@ -1,4 +1,6 @@
 from .entities.Signature import Signature
+from fpdf import FPDF
+from flask import Response 
 
 class ModelSignature():
     @classmethod
@@ -129,10 +131,10 @@ class ModelSignature():
         try:
             con=db.connect()
             cursor = con.cursor()
-            sql="""SELECT m.id, m.nombre, `carrera`.`nombre` FROM `materia` m
-                INNER JOIN `person` ON `person`.`code`= `code_teacher`
+            sql="""SELECT m.id, m.nombre, `carrera`.`nombre`, m.code FROM `materia` m
+                INNER JOIN `clase` ON `clase`.`id_materia` = m.code
                 INNER JOIN `carrera` ON `carrera`.`code` = `id_carrera`
-                WHERE `person`.`code`= {};""".format(code)
+                WHERE `clase`.`id_maestro`= {};""".format(code)
             cursor.execute(sql)
             row=cursor.fetchall()
             con.commit()
@@ -143,5 +145,47 @@ class ModelSignature():
         except Exception as ex:
             raise Exception(ex)
 
+    @classmethod
+    def get_report(self, db, code):
+        try:
+            con=db.connect()
+            cursor = con.cursor()
+            sql="""SELECT m.id, m.nombre, `carrera`.`nombre`, m.code FROM `materia` m
+                INNER JOIN `clase` ON `clase`.`id_materia` = m.code
+                INNER JOIN `carrera` ON `carrera`.`code` = `id_carrera`
+                WHERE `clase`.`id_maestro`= {};""".format(code)
+            cursor.execute(sql)
+            row=cursor.fetchall()
+            pdf = FPDF()
+            pdf.add_page()
+            page_width = pdf.w -2 * pdf.l_margin
+            pdf.set_font('Times','B', 22.0)
+            pdf.set_text_color(0,125,255)
+            pdf.cell(page_width, 0.0, 'Materias Asignadas', align='C')
+            pdf.ln(10)
+            pdf.set_font('Courier', '',12)
+            pdf.set_text_color(64,64,64)
+            col_width = page_width/2
+            pdf.ln(1)
+            th = pdf.font_size
+            for r in row:
+                pdf.cell(col_width, th, str(r[1]), border=1)
+                res =r[2]
+                rcut= res[:30]
+                rcut = rcut + '...'
+                pdf.cell(col_width, th, rcut, border=1)
+                pdf.ln(th)
+            
+            pdf.ln(10)
+            pdf.set_font('Times', '', 10.0)
+            pdf.cell(page_width, 0.0, '- fin del reporte -', align='C')
+            response = Response(pdf.output(dest='S').encode('latin-1'), mimetype='application/pdf', headers={'Content-Disposition':'inline;filename=materias_asignadas.pdf'})
+            con.commit()
+            if row != None:
+                return response
+            else:
+                return None
+        except Exception as ex:
+            raise Exception(ex)
 
     

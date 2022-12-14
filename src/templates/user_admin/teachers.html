@@ -1,16 +1,16 @@
 {% include 'user_admin/header_forms.html' %}
 {{ moment.include_moment() }}
 <header>
-    <nav class="navbar navbar-expand navbar-light bg-light">
+    <nav class="navbar navbar-expand navbar-dark bg-primary">
         <div class="nav navbar-nav">
             {% if current_user.rol == 'admin' %}
-            <a class="nav-item nav-link active" href="{{ url_for('user_admin') }}" aria-current="page">Home</span></a>
+            <a class="nav-item nav-link active" href="{{ url_for('user_admin') }}" aria-current="page">Inicio</span></a>
             {% endif %}
             {% if current_user.rol == 'aux' %}
-            <a class="nav-item nav-link active" href="{{ url_for('user_aux') }}" aria-current="page">Home</span></a>
+            <a class="nav-item nav-link active" href="{{ url_for('user_aux') }}" aria-current="page">Inicio</span></a>
             {% endif %}<a role="button" class="nav-item nav-link" data-bs-toggle="modal" data-bs-target="#exampleModal">Crear Profesores</a>
-          <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
-          <p class="nav-item nav-link active"><strong> Current date and time: {{ moment().format('DD-MM-YYYY hh:mm:ss') }}</strong></p>
+          <a class="nav-item nav-link" href="{{ url_for('logout') }}">Salir</a>
+          <p class="nav-item nav-link active"><strong> Día y hora actual: {{ moment().format('DD-MM-YYYY hh:mm:ss') }}</strong></p>
         </div>
     </nav>
 </header>
@@ -156,7 +156,7 @@
   </script>
 
   <div class="col lg-6">
-    <nav aria-label="Page navigation example">
+    <!-- <nav aria-label="Page navigation example">
       <ul class="pagination justify-content-end">
         <li class="page-item disabled">
           <a class="page-link">Previous</a>
@@ -168,9 +168,10 @@
           <a class="page-link" href="#">Next</a>
         </li>
       </ul>
-    </nav>
+    </nav> -->
   </div>
 </div> 
+<br>
 <a name="" id="" class="btn btn-primary" href="{{ url_for('teachers_form')}}" role="button">Ver Todos</a> 
     <div class="table-responsive">
     <table class="table table-hover">
