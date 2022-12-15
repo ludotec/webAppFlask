@@ -3,8 +3,13 @@
     <header>
         <nav class="navbar navbar-expand navbar-dark bg-primary">
             <div class="nav navbar-nav">
-                <a class="nav-item nav-link active" href="{{ url_for('user_user') }}" aria-current="page">Inicio</span></a>
-                <a class="nav-item nav-link" href="{{ url_for('logout') }}">Salir</a>
+                {% if current_user.rol == 'admin' %}
+                <a class="nav-item nav-link active" href="{{ url_for('class_form') }}" aria-current="page">Volver</span></a>
+                {% endif %}
+                {% if current_user.rol == 'user' %}
+                <a class="nav-item nav-link active" href="{{ url_for('user_user') }}" aria-current="page">Volver</span></a>
+                {% endif %}
+                <a class="nav-item nav-link" href="{{ url_for('logout') }}">Cerrar Sesión</a>
                 
             </div>
         </nav>
@@ -14,6 +19,20 @@
   {% endblock  %}
 
 <div class="container">
+    <br>
+    {% with messages = get_flashed_messages() %}
+
+    {% if messages  %}
+    <br>
+    {% for message in messages %}
+    <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+        <strong>{{ message }}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
     <div class="row">    
         <div class="table-responsive">
             <table class="table table-hover">
@@ -48,7 +67,7 @@
                         {% else %}
                         {% set q_3 = s_in_class[9] %}
                         {% endif %}
-                        <td>P1={{q_1}} - P2={{q_2}} - P3= {{q_3}}</td>
+                        <td>P1={{q_1}}&nbsp;<strong style="color: orangered;">&#91;&#93;</strong>&nbsp;P2={{q_2}}&nbsp;<strong style="color: orangered;">&#91;&#93;</strong>&nbsp;P3= {{q_3}}</td>
                         {% if s_in_class[10] == None %}
                         {% set q_final = 'S/C' %}
                         {% else %}
@@ -57,9 +76,12 @@
                             <td>Final = {{q_final}}</td>
                         
                         <td>
+                            {% if current_user.rol == 'user' %}
                             <a class="btn btn-success" data-bs-toggle="modal" data-bs-target="#delete{{s_in_class[0]}}" role="button">
                                 Calificar
                             </a>
+                            {% endif %}
+                
                             <div class="modal fade" id="delete{{s_in_class[0]}}" tabindex="-1" aria-labelledby="editLabel" aria-hidden="true">
                               <div class="modal-dialog">
                                 <div class="modal-content">

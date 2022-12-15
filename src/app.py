@@ -142,7 +142,12 @@ def delete_users(id):
 @check_role(['admin','aux'])
 def careers_form():
     allCareers=ModelCareer.get_all(db)
-    return render_template('user_admin/careers.html', allCareers=allCareers)
+    max_code_temp = 0
+    for career in allCareers:
+        if career[2] > max_code_temp:
+            max_code_temp = career[2]
+    max_code = max_code_temp + 100
+    return render_template('user_admin/careers.html', allCareers=allCareers, max_code=max_code)
 
 @app.route('/admin/careers/save', methods=['POST'])
 @login_required
@@ -166,17 +171,11 @@ def edit_careers():
         datos=(_val,int(_id))
         pos = 1
         ModelCareer.edit(db,datos, pos)
-    if request.form.get('chkCode') !='yes': None
-    else: 
-        _val = request.form['txtCode']
-        datos=(int(_val),int(_id))
-        pos = 2
-        ModelCareer.edit(db,datos, pos)
     if request.form.get('chkActive') !='yes': None
     else: 
         _val = request.form['txtActive']
         datos=(_val,int(_id))
-        pos = 3
+        pos = 2
         ModelCareer.edit(db, datos, pos)
     return redirect(url_for('careers_form'))
 
@@ -184,6 +183,11 @@ def edit_careers():
 @login_required
 @check_role(['admin'])
 def delete_careers(id):
+    is_subject_exists = ModelSignature.get_by_career(db, id)
+    if is_subject_exists != None:
+        flash('La carrera no se puede eliminar, tiene asignadas materias.')
+        return redirect(url_for('careers_form'))    
+    print(id)
     ModelCareer.delete(db, id)
     return redirect(url_for('careers_form'))
 
@@ -230,7 +234,7 @@ def save_signatures():
     _name = request.form['txtName']
     _code = request.form['txtCode']
     _career_from =  request.form['txtCareerFrom']
-    _code_teacher = request.form['txtTeacher']
+    # _code_teacher = request.form['txtTeacher']
     _created_at = request.form['txtCreatedAt']
     _active = request.form['txtActive']
     allSignatures=ModelSignature.get_all(db)
@@ -238,17 +242,15 @@ def save_signatures():
     for signature in allSignatures:
         if int(signature[2]) > int(_career_from) and int(signature[2]) < int(_career_from)+100:
             _max_code = int(signature[2]) + 1
-            print(_max_code)
     for signature in allSignatures:
         if int(_code) == int(signature[2]):
-            print(_code)
             val=0
             flash("Error al crear la materia!, Código sugerido " + str(_max_code))
             return redirect(url_for('signatures_form'))    
         else:
             val=1 
     if val:
-        ModelSignature.create(db, _name,_code,_career_from, _code_teacher, _created_at,_active)
+        ModelSignature.create(db, _name,_code,_career_from, _created_at,_active)
         return redirect(url_for('signatures_form'))    
     
 @app.route('/admin/signatures/edit', methods=['POST'])
@@ -388,6 +390,10 @@ def edit_teachers():
 @login_required
 @check_role(['admin','aux'])
 def delete_teachers(id):
+    teacher_in_class = ModelCourse.get_by_teacher_class(db, id)
+    if teacher_in_class != None:
+         flash('Docente no se puede eliminar, tiene asignada una clase.')
+         return redirect(url_for('teachers_form'))
     ModelPerson.delete(db, id)
     return redirect(url_for('teachers_form'))
 
@@ -509,7 +515,6 @@ def class_form():
         if course[0] > max_temp_code:
             max_temp_code = course[0]
             maxCode = course[0] +1
-            
     return render_template('user_admin/class.html', allCareers=allCareers, allPersons=allPersons, allSubjects=allSubjects, allCourses=allCourses, maxCode=maxCode, allStudents=allStudents)
 
 @app.route('/admin/class/save', methods=['POST'])
@@ -609,11 +614,24 @@ def add_student():
     return redirect(url_for('class_form'))
         
 
+@app.route('/admin/class/edit', methods=['POST'])
+@login_required
+@check_role(['admin','aux'])
+def edit_course():
+    _id = request.form['txtId']
+    _id_materia = request.form['txtIdMateria']
+    _id_maestro = request.form['txtIdMaestro']
+    ModelCourse.edit(db, _id, _id_materia, _id_maestro)
+    return redirect(url_for('class_form'))
+
 
 @app.route('/admin/class/delete/<id>', methods=['GET','POST'])
 @login_required
 @check_role(['admin','aux'])
 def delete_course(id):
+    all_students_class = ModelCourse.get_by_student_class(db, id)
+    for st in all_students_class:
+        ModelCourse.delete_student_class(db, st[0])
     ModelCourse.delete(db, id)
     return redirect(url_for('class_form'))
 
@@ -666,12 +684,31 @@ def student_qualify():
         ModelStudent.set_qualify(db,  _q_number, _id_student , _id_class, _student_q_final)
     return redirect(url_for('student_class', id=_id_subject))
 
+
 @app.route('/users/student/<id>')
 @login_required
 @check_role(['admin','user'])
-def student_class(id):
+def student_class(id, code=''):
     _code= session.get('code')
     allStudentsInClass=ModelStudent.get_all_student_in_class(db, id, _code)
+    print(allStudentsInClass)
+    if len(allStudentsInClass) < 1 :
+        print('entro')
+        flash('Aun no tiene alumnos asignados a esta clase.')
+        return render_template('user_user/students_class.html', allStudentsInClass=allStudentsInClass)    
+    return render_template('user_user/students_class.html', allStudentsInClass=allStudentsInClass)
+
+@app.route('/users/student/<id>/<_code>')
+@login_required
+@check_role(['admin','user'])
+def student_class_adm(id, _code):
+    # _code= session.get('code')
+    allStudentsInClass=ModelStudent.get_all_student_in_class(db, id, _code)
+    print(allStudentsInClass)
+    if len(allStudentsInClass) < 1 :
+        print('entro')
+        flash('Aun no tiene alumnos asignados a esta clase.')
+        return render_template('user_user/students_class.html', allStudentsInClass=allStudentsInClass)    
     return render_template('user_user/students_class.html', allStudentsInClass=allStudentsInClass)
 
 @app.route("/css/<filecss>")

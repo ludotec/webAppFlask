@@ -11,7 +11,7 @@
             {% endif %}
             
             <a role="button" class="nav-item nav-link" data-bs-toggle="modal" data-bs-target="#exampleModal">Crear Carrera</a>
-            <a class="nav-item nav-link" href="{{ url_for('logout') }}">Salir</a>
+            <a class="nav-item nav-link" href="{{ url_for('logout') }}">Cerrar Sesión</a>
             <p class="nav-item nav-link active"><strong> Dia y hora actual: {{ moment().format('DD-MM-YYYY hh:mm:ss') }}</strong></p>
           </div>
     </nav>
@@ -33,7 +33,7 @@
             <input type="text" name="txtName" id="txtName" class="form-control"  aria-describedby="helpId" required>
           </div>
           <div class="mb-3">
-            <label for="txtCode" class="form-label">Codigo</label>
+            <label for="txtCode" class="form-label">Codigo</label><strong><span style="color: orangered;">&nbsp;(siguiente código {{max_code}})</span></strong></label>
             <input type="number" name="txtCode" id="txtCode" class="form-control" aria-describedby="helpId" required>
           </div>
             <input type="hidden" name="txtCreatedAt" id="txtCreatedAt" class="form-control" aria-describedby="helpId">
@@ -61,7 +61,20 @@
     </div>
   </div>
 <br>
-<nav aria-label="Page navigation example">
+{% with messages = get_flashed_messages() %}
+
+    {% if messages  %}
+    <br>
+    {% for message in messages %}
+    <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+        <strong>{{ message }}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+<!-- <nav aria-label="Page navigation example">
     <ul class="pagination justify-content-end">
       <li class="page-item disabled">
         <a class="page-link">Previous</a>
@@ -73,7 +86,7 @@
         <a class="page-link" href="#">Next</a>
       </li>
     </ul>
-  </nav>
+  </nav> -->
   <div class="table-responsive">
     <table class="table table-striped">
         <thead>
@@ -113,7 +126,7 @@
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                        <a class="btn btn-primary" href="{{ url_for('delete_careers',id=career[0])}}" role="button">Aceptar</a>
+                        <a class="btn btn-primary" href="{{ url_for('delete_careers',id=career[2])}}" role="button">Aceptar</a>
                       </div>
                   </div>
                 </div>
@@ -138,10 +151,10 @@
       <input type="checkbox" name="chkName" id="chkName" value="yes" style="margin: 0 3px;"><label for="txtName" class="form-label">Nombre</label>
       <input type="text" name="txtName" id="txtName" placeholder="{{career[1]}}" class="form-control"  aria-describedby="helpId">
     </div>
-    <div class="mb-3">
+    <!-- <div class="mb-3">
       <input type="checkbox" name="chkCode" id="chkCode" value="yes" style="margin: 0 3px;"><label for="txtCode" class="form-label">Dirección</label>
       <input type="number" name="txtCode" id="txtCode" class="form-control" aria-describedby="helpId" placeholder="{{career[2]}}">
-    </div>
+    </div> -->
     <div class="mb-3">
       <input type="checkbox" name="chkActive" id="chkActive" value="yes" style="margin: 0 3px;"><label for="txtActive" class="form-label">Estado</label>
       <select class="form-select form-select-md" name="txtActive" id="txtActive">

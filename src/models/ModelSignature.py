@@ -9,9 +9,8 @@ class ModelSignature():
         _data=data
         match _pos:
             case "":
-                sql="""SELECT m.id, m.nombre, m.code, `carrera`.`nombre`, `person`.`apenom`, m.creado_el, m.habilitado,
-                m.code_teacher, m.id_carrera FROM `materia` m
-                INNER JOIN `person` ON `person`.`code`= `code_teacher`
+                sql="""SELECT m.id, m.nombre, m.code, `carrera`.`nombre`, m.creado_el, m.habilitado,
+                m.id_carrera FROM `materia` m
                 INNER JOIN `carrera` ON `carrera`.`code` = `id_carrera`"""
                 pass
             case '0':
@@ -61,13 +60,13 @@ class ModelSignature():
             raise Exception(ex)
 
     @classmethod
-    def create(self, db, name, code, career_from, code_teacher, created_at, active):
+    def create(self, db, name, code, career_from, created_at, active):
         try:
             con=db.connect()
             cursor=con.cursor()
-            sql="""INSERT INTO `materia`(`id`,`nombre`, `code`, `id_carrera`, `code_teacher`, `creado_el`, `habilitado`)
-             VALUES (null,%s, %s, %s, %s,%s, %s)"""
-            datos=(name, code, career_from, code_teacher, created_at, active)
+            sql="""INSERT INTO `materia`(`id`,`nombre`, `code`, `id_carrera`, `creado_el`, `habilitado`)
+             VALUES (null,%s, %s, %s, %s,%s)"""
+            datos=(name, code, career_from, created_at, active)
             cursor.execute(sql, datos)
             con.commit()
         except Exception as ex:
@@ -137,6 +136,22 @@ class ModelSignature():
                 WHERE `clase`.`id_maestro`= {};""".format(code)
             cursor.execute(sql)
             row=cursor.fetchall()
+            con.commit()
+            if row != None:
+                return row
+            else:
+                return None
+        except Exception as ex:
+            raise Exception(ex)
+
+    @classmethod
+    def get_by_career(self, db, code):
+        try:
+            con=db.connect()
+            cursor = con.cursor()
+            sql="""SELECT * FROM `materia` WHERE `materia`.`id_carrera`= {};""".format(code)
+            cursor.execute(sql)
+            row=cursor.fetchone()
             con.commit()
             if row != None:
                 return row

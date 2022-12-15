@@ -5,7 +5,7 @@ class ModelStudent():
         _data=data 
         match _pos:
             case "":
-                sql="SELECT * FROM `student`"
+                sql="SELECT * FROM `student` ORDER BY code"
                 pass
             case '0':
                 # filter por docente

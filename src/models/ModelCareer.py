@@ -41,13 +41,6 @@ class ModelCareer():
                     con.commit()
                     pass
                 case 2 :
-                    _sql = "UPDATE `carrera` SET `code`=%s  WHERE `id`= %s"
-                    con=db.connect()
-                    cursor=con.cursor()
-                    cursor.execute(_sql, datos)
-                    con.commit()
-                    pass
-                case 3 :
                     _sql = "UPDATE `carrera` SET `habilitado`=%s  WHERE `id`= %s"
                     con=db.connect()
                     cursor=con.cursor()
@@ -62,7 +55,7 @@ class ModelCareer():
         try:
             con=db.connect()
             cursor = con.cursor()
-            sql="DELETE FROM `carrera` WHERE `carrera`.`id` = {};".format(id)
+            sql="DELETE FROM `carrera` WHERE `carrera`.`code` = {};".format(id)
             cursor.execute(sql)
             con.commit()
         except Exception as ex:

@@ -12,7 +12,7 @@ class ModelCourse():
         try:
             con=db.connect()
             cursor = con.cursor()
-            sql="""SELECT clase.id, carrera.nombre, materia.nombre,  person.apenom FROM `clase`
+            sql="""SELECT clase.id, carrera.nombre, materia.nombre,  person.apenom, materia.code, person.code FROM `clase`
             INNER JOIN materia ON materia.code = clase.id_materia
             INNER JOIN person ON person.code = clase.id_maestro
             INNER JOIN carrera on carrera.code = materia.id_carrera"""
@@ -48,6 +48,18 @@ class ModelCourse():
             cursor = con.cursor()
             sql="INSERT INTO `clase`(`id`, `id_materia`, `id_maestro`) VALUES (%s,%s,%s)"
             datos = (id, id_materia, id_maestro)
+            cursor.execute(sql, datos)
+            con.commit()
+        except Exception as ex:
+            raise Exception(ex)
+
+    @classmethod
+    def edit(self, db, id, id_materia, id_maestro):
+        try:
+            con=db.connect()
+            cursor = con.cursor()
+            sql="UPDATE `clase` SET `id_materia`=%s,`id_maestro`=%s WHERE id = %s"
+            datos = (id_materia, id_maestro, id)
             cursor.execute(sql, datos)
             con.commit()
         except Exception as ex:
@@ -93,4 +105,47 @@ class ModelCourse():
         except Exception as ex:
             raise Exception(ex)
        
+    @classmethod
+    def get_by_student_class(self,db,id_clase):
+        try:
+            con=db.connect()
+            cursor = con.cursor()
+            sql="SELECT * FROM `student_clase` WHERE id_clase=%s"
+            datos= (id_clase)
+            cursor.execute(sql, datos)
+            row=cursor.fetchall()
+            con.commit()
+            if row != None:
+                return row
+            else:
+                return None
+        except Exception as ex:
+            raise Exception(ex)
+
+    @classmethod
+    def get_by_teacher_class(self,db,id_maestro):
+        try:
+            con=db.connect()
+            cursor = con.cursor()
+            sql="SELECT * FROM `clase` WHERE id_maestro=%s"
+            datos= (id_maestro)
+            cursor.execute(sql, datos)
+            row=cursor.fetchone()
+            con.commit()
+            if row != None:
+                return row
+            else:
+                return None
+        except Exception as ex:
+            raise Exception(ex)
     
+    @classmethod
+    def delete_student_class(self, db, id):
+        try:
+            con=db.connect()
+            cursor = con.cursor()
+            sql="DELETE FROM `student_clase` WHERE id = {};".format(id)
+            cursor.execute(sql)
+            con.commit()
+        except Exception as ex:
+            raise Exception(ex)

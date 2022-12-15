@@ -10,13 +10,13 @@
             <a class="nav-item nav-link active" href="{{ url_for('user_aux') }}" aria-current="page">Inicio</span></a>
             {% endif %}
             
-            <a role="button" class="nav-item nav-link" data-bs-toggle="modal" data-bs-target="#exampleModal">Crear Clase</a>
-            <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
+            <a role="button" class="nav-item nav-link active" data-bs-toggle="modal" data-bs-target="#exampleModal">Crear Clase</a>
+            <a class="nav-item nav-link" href="{{ url_for('logout') }}">Cerrar Sesión</a>
+            <p class="nav-item nav-link active"><strong> Dia y hora actual: {{ moment().format('DD-MM-YYYY hh:mm:ss') }}</strong></p>
           </div>
     </nav>
 </header>
 <div class="container">
-  <p>Current date and time: {{ moment().format('YYYY-MM-DD hh:mm:ss') }}</p>
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -74,7 +74,7 @@
     {% endfor %}
     {% endif %}
     {% endwith %}
-<nav aria-label="Page navigation example">
+<!-- <nav aria-label="Page navigation example">
     <ul class="pagination justify-content-end">
       <li class="page-item disabled">
         <a class="page-link">Previous</a>
@@ -86,7 +86,7 @@
         <a class="page-link" href="#">Next</a>
       </li>
     </ul>
-  </nav>
+  </nav> -->
   <div class="table-responsive">
     <table class="table table-striped">
         <thead>
@@ -94,8 +94,7 @@
                 <th scope="col">Carrera</th>
                 <th scope="col">Materia</th>
                 <th scope="col">Profesor</th>
-                <th scope="col">Código</th>
-                <th scope="col">Cant. Alumnos</th>
+                <th scope="col">Cód.</th>
                 <th scope="col">Acciones</th>
             </tr>
         </thead>
@@ -106,7 +105,6 @@
                 <td>{{course[2]}}</td>
                 <td>{{course[3]}}</td>
                 <td>{{course[0]}}</td>
-                <td>30</td>
                 <td>
                   <a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete{{course[0]}}" role="button">
                     Eliminar
@@ -115,11 +113,11 @@
                   <div class="modal-dialog">
                     <div class="modal-content">
                       <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="editLabel">Eliminar Carrera</h1>
+                        <h1 class="modal-title fs-5" id="editLabel">Eliminar Clase</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                       </div>
                       <div class="modal-body">
-                        <p><strong>Esta por eliminar a {{course[1]}}!</strong></p>
+                        <p style="color: orangered;"><strong>Esta por eliminar la clase {{course[0]}} con todos los alumnos!</strong></p>
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -136,30 +134,32 @@
 <div class="modal-dialog">
 <div class="modal-content">
   <div class="modal-header">
-    <h1 class="modal-title fs-5" id="editLabel">Editar Carrera</h1>
+    <h1 class="modal-title fs-5" id="editLabel">Editar Clase</h1>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
   </div>
   <div class="modal-body">
-    <p><strong>Tilde las opciones que va a actualizar.</strong></p>
-    <form action="/admin/careers/edit" method="post">  
+    <p style="color: orangered;"><strong>Esta editando la clase {{course[0]}}</strong></p>
+    <form action="/admin/class/edit" method="post">  
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <input type="hidden" name="txtId" value="{{course[0]}}">
     <div class="mb-3">
-      <input type="checkbox" name="chkName" id="chkName" value="yes" style="margin: 0 3px;"><label for="txtName" class="form-label">Nombre</label>
-      <input type="text" name="txtName" id="txtName" placeholder="{{course[1]}}" class="form-control"  aria-describedby="helpId">
-    </div>
-    <div class="mb-3">
-      <input type="checkbox" name="chkCode" id="chkCode" value="yes" style="margin: 0 3px;"><label for="txtCode" class="form-label">Dirección</label>
-      <input type="number" name="txtCode" id="txtCode" class="form-control" aria-describedby="helpId" placeholder="{{course[2]}}">
-    </div>
-    <div class="mb-3">
-      <input type="checkbox" name="chkActive" id="chkActive" value="yes" style="margin: 0 3px;"><label for="txtActive" class="form-label">Estado</label>
-      <select class="form-select form-select-md" name="txtActive" id="txtActive">
-          <option value="1" selected>Habilitado</option>
-          <option value="0">No Habilitado</option>
+      <label for="txtIdMateria" class="form-label">Materia</label>
+      <select class="form-select form-select-md" name="txtIdMateria" id="txtIdMateria" required>
+        <option value="" selected>Seleccionar</option>
+        {% for subject in allSubjects %}
+          <option value="{{subject[2]}}">{{subject[1]}}</option>
+        {% endfor %}  
       </select>
     </div>
-    
+    <div class="mb-3">
+      <label for="txtIdMaestro" class="form-label">Docente</label>
+      <select class="form-select form-select-md" name="txtIdMaestro" id="txtIdMaestro" required>
+          <option value="" selected>Seleccionar</option>
+        {% for person in allPersons %}
+          <option value="{{person[10]}}">{{person[1]}}</option>
+        {% endfor %}  
+      </select>
+    </div>
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -240,8 +240,9 @@
     </div>
   </div>
 </div>
-
-
+{% if current_user.rol == 'admin' %}
+<a class="btn btn-info" href="{{ url_for('student_class_adm',id=course[4], _code=course[5])}}" role="button">Ver</a>
+{% endif %}
                 </td>
             </tr>
             {% endfor %}

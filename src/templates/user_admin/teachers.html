@@ -9,7 +9,7 @@
             {% if current_user.rol == 'aux' %}
             <a class="nav-item nav-link active" href="{{ url_for('user_aux') }}" aria-current="page">Inicio</span></a>
             {% endif %}<a role="button" class="nav-item nav-link" data-bs-toggle="modal" data-bs-target="#exampleModal">Crear Profesores</a>
-          <a class="nav-item nav-link" href="{{ url_for('logout') }}">Salir</a>
+          <a class="nav-item nav-link" href="{{ url_for('logout') }}">Cerrar Sesión</a>
           <p class="nav-item nav-link active"><strong> Día y hora actual: {{ moment().format('DD-MM-YYYY hh:mm:ss') }}</strong></p>
         </div>
     </nav>
@@ -172,6 +172,19 @@
   </div>
 </div> 
 <br>
+{% with messages = get_flashed_messages() %}
+
+    {% if messages  %}
+    <br>
+    {% for message in messages %}
+    <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+        <strong>{{ message }}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
 <a name="" id="" class="btn btn-primary" href="{{ url_for('teachers_form')}}" role="button">Ver Todos</a> 
     <div class="table-responsive">
     <table class="table table-hover">
@@ -221,7 +234,7 @@
                           </div>
                           <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                            <a class="btn btn-primary" href="{{ url_for('delete_teachers',id=person[0])}}" role="button">Aceptar</a>
+                            <a class="btn btn-primary" href="{{ url_for('delete_teachers',id=person[10])}}" role="button">Aceptar</a>
                           </div>
                       </div>
                     </div>

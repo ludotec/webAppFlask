@@ -9,7 +9,7 @@
             {% if current_user.rol == 'aux' %}
             <a class="nav-item nav-link active" href="{{ url_for('user_aux') }}" aria-current="page">Inicio</span></a>
             {% endif %}<a role="button" class="nav-item nav-link" data-bs-toggle="modal" data-bs-target="#exampleModal">Crear Estudiante</a>
-          <a class="nav-item nav-link" href="{{ url_for('logout') }}">Salir</a>
+          <a class="nav-item nav-link" href="{{ url_for('logout') }}">Cerrar Sesión</a>
           <p class="nav-item nav-link active"><strong> Dia y hora actual: {{ moment().format('DD-MM-YYYY hh:mm:ss') }}</strong></p>
         </div>
     </nav>

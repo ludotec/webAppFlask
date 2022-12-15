@@ -7,7 +7,7 @@ class ModelPerson():
         _data=data 
         match _pos:
             case "":
-                sql="SELECT * FROM `person`"
+                sql="SELECT * FROM `person` ORDER BY code"
                 pass
             case '0':
                 # filter por docente
@@ -90,7 +90,7 @@ class ModelPerson():
         try:
             con=db.connect()
             cursor = con.cursor()
-            sql="DELETE FROM `person` WHERE `person`.`id` = {};".format(id)
+            sql="DELETE FROM `person` WHERE `person`.`code` = {};".format(id)
             cursor.execute(sql)
             con.commit()
         except Exception as ex:
@@ -112,3 +112,6 @@ class ModelPerson():
                 return None
         except Exception as ex:
             raise Exception(ex)
+
+
+    

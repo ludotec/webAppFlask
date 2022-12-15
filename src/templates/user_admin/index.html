@@ -10,11 +10,27 @@
             <a class="nav-item nav-link" href="{{ url_for('teachers_form') }}">Profesores</a>
             <a class="nav-item nav-link" href="{{ url_for('students_form') }}">Alumnos</a>
             <a class="nav-item nav-link" href="{{ url_for('class_form') }}">Clases</a>
-            <a class="nav-item nav-link active" href="{{ url_for('logout') }}">Salir</a>
+            <a class="nav-item nav-link active" href="{{ url_for('logout') }}">Cerrar Sesión</a>
           </div>
     </nav>
 </header>
 <div class="container">
+    <br>
+    <div class="row align-items-md-stretch">
+        <div class="col-md-6">
+            <div
+                class="h-100 p-5 text-white bg-success border rounded-3">
+                <h2>Bienvenidos a ITES!</h2>
+                <p>Este el panel de control principal, podrá realizar todas las operaciones relacionadas a la gestion del Instituto</p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div
+                class="h-100 border bg-success rounded-3 text-center">
+                <img src="{{ url_for('static', filename='img/frente_ites.jpg')}}" alt="Frente ites" width="250px" height="170px" style="margin-top: 20px;">
+            </div>
+        </div>
+    </div>
 
 
 
