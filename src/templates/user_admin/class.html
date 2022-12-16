@@ -107,7 +107,7 @@
                 <td>{{course[0]}}</td>
                 <td>
                   <a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete{{course[0]}}" role="button">
-                    Eliminar
+                    <i class="fa-solid fa-trash-can"></i>
                 </a>
                 <div class="modal fade" id="delete{{course[0]}}" tabindex="-1" aria-labelledby="editLabel" aria-hidden="true">
                   <div class="modal-dialog">
@@ -127,7 +127,7 @@
                 </div>
                </div> 
                 <a class="btn btn-success"  data-bs-toggle="modal" data-bs-target="#edit{{course[0]}}" role="button">
-                  Editar
+                  <i class="fa-solid fa-pen-to-square"></i>
               </a>
                 <!-- Modal Nuevo Profesor -->
 <div class="modal fade" id="edit{{course[0]}}" tabindex="-1" aria-labelledby="editLabel" aria-hidden="true">
@@ -170,7 +170,7 @@
 </div>
 </div>
 <a class="btn btn-primary"  data-bs-toggle="modal" data-bs-target="#addStudent{{course[0]}}" role="button">
-  +
+  <i class="fa-solid fa-user-plus"></i>
 </a>
 
 <!-- Modal Agregar Alumnos a clase -->
@@ -241,7 +241,7 @@
   </div>
 </div>
 {% if current_user.rol == 'admin' %}
-<a class="btn btn-info" href="{{ url_for('student_class_adm',id=course[4], _code=course[5])}}" role="button">Ver</a>
+<a class="btn btn-info" href="{{ url_for('student_class_adm',id=course[4], _code=course[5])}}" role="button"><i class="fa-solid fa-eye"></i></a>
 {% endif %}
                 </td>
             </tr>

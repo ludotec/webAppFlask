@@ -33,7 +33,7 @@
             <input type="text" name="txtFullname" id="txtFullname" class="form-control" placeholder="Ingrese nombre, apellido" aria-describedby="helpId" required>
           </div>
           <div class="mb-3">
-            <label for="txtCode" class="form-label">Código <strong>(Solo Profesores)</strong></label>
+            <label for="txtCode" class="form-label">Código <span style="color: orangered;"><strong>(Solo Profesores)</strong></span></label>
             <input type="text" name="txtCode" id="txtCode" class="form-control" placeholder="Ingrese el código del profesor" aria-describedby="helpId">
           </div>
           <div class="mb-3">
@@ -102,7 +102,7 @@
                 <td>
                     {% if user[3] != 'admin' %}
                     <a class="btn btn-danger"  data-bs-toggle="modal" data-bs-target="#delete{{user[0]}}" role="button">
-                        Eliminar
+                      <i class="fa-solid fa-trash-can"></i>
                     </a>
                     <div class="modal fade" id="delete{{user[0]}}" tabindex="-1" aria-labelledby="editLabel" aria-hidden="true">
                       <div class="modal-dialog">

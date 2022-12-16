@@ -254,15 +254,15 @@
                 <td>{{signature[2]}}</td>
                 <td>{{signature[3]}}</td>
                 <!-- <td>{{signature[4]}}</td> -->
-                {% if signature[6] == 1 %}
+                {% if signature[5] == 1 %}
                 <td>Si</td>
                 {% endif %}
-                {% if signature[6] != 1 %}
+                {% if signature[5] != 1 %}
                 <td>No</td>
                 {% endif %}
                 <td>
                   <a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete{{signature[0]}}" role="button">
-                    Eliminar
+                    <i class="fa-solid fa-trash-can"></i>
                 </a>
                 <div class="modal fade" id="delete{{signature[0]}}" tabindex="-1" aria-labelledby="editLabel" aria-hidden="true">
                   <div class="modal-dialog">
@@ -282,7 +282,7 @@
                 </div>
                </div> 
                 <a class="btn btn-success"  data-bs-toggle="modal" data-bs-target="#edit{{signature[0]}}" role="button">
-                  Editar
+                  <i class="fa-solid fa-pen-to-square"></i>
               </a>
                 <!-- Modal Nuevo Profesor -->
 <div class="modal fade" id="edit{{signature[0]}}" tabindex="-1" aria-labelledby="editLabel" aria-hidden="true">

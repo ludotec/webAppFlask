@@ -53,7 +53,7 @@
           
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
           <button type="submit" class="btn btn-primary">Guardar</button>
         </div>
     </form>
@@ -112,7 +112,7 @@
                 {% endif %}
                 <td>
                   <a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete{{career[0]}}" role="button">
-                    Eliminar
+                    <i class="fa-solid fa-trash-can"></i>
                 </a>
                 <div class="modal fade" id="delete{{career[0]}}" tabindex="-1" aria-labelledby="editLabel" aria-hidden="true">
                   <div class="modal-dialog">
@@ -132,7 +132,7 @@
                 </div>
                </div> 
                 <a class="btn btn-success"  data-bs-toggle="modal" data-bs-target="#edit{{career[0]}}" role="button">
-                  Editar
+                  <i class="fa-solid fa-pen-to-square"></i>
               </a>
                 <!-- Modal Nuevo Profesor -->
 <div class="modal fade" id="edit{{career[0]}}" tabindex="-1" aria-labelledby="editLabel" aria-hidden="true">

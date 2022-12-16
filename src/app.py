@@ -187,7 +187,6 @@ def delete_careers(id):
     if is_subject_exists != None:
         flash('La carrera no se puede eliminar, tiene asignadas materias.')
         return redirect(url_for('careers_form'))    
-    print(id)
     ModelCareer.delete(db, id)
     return redirect(url_for('careers_form'))
 
@@ -200,24 +199,19 @@ def signatures_form():
     if request.form.get('txtFilter'): 
         _filterSelected = request.form['txtFilter']
         _pos=_filterSelected
-        print(_filterSelected)
     if request.form.get('txtTeacherFilter'): 
         _filterTeacher = request.form['txtTeacherFilter']
         _data=_filterTeacher
-        print(_filterTeacher)
     if request.form.get('txtSignatureFilter'): 
         _filterSignature = request.form['txtSignatureFilter']
         _data=_filterSignature
-        print(_filterSignature)
     if request.form.get('txtCareerFilter'): 
         _filterCareer = request.form['txtCareerFilter']
         _data=_filterCareer
-        print(_filterCareer)
     if request.form.get('txtActiveFilter'): 
         _filterActive = request.form['txtActiveFilter']
         _data=_filterActive
-        print(_filterActive)
-
+    
     allSignatures=ModelSignature.get_all(db,_pos,_data)
     allCareers = ModelCareer.get_all(db)
     allPersons=ModelPerson.get_all(db)
@@ -306,16 +300,13 @@ def teachers_form():
     if request.form.get('txtFilter'): 
         _filterSelected = request.form['txtFilter']
         _pos=_filterSelected
-        print(_filterSelected)
     if request.form.get('txtTeacherFilter'): 
         _filterTeacher = request.form['txtTeacherFilter']
         _data=_filterTeacher
-        print(_filterTeacher)
     if request.form.get('txtActiveFilter'): 
         _filterActive = request.form['txtActiveFilter']
         _data=_filterActive
-        print(_filterActive)
-
+       
     allPersons=ModelPerson.get_all(db,_pos,_data)
     codePersons=ModelPerson.get_all(db)
     max_code = 0
@@ -406,16 +397,13 @@ def students_form():
     if request.form.get('txtFilter'): 
         _filterSelected = request.form['txtFilter']
         _pos=_filterSelected
-        print(_filterSelected)
     if request.form.get('txtStudentFilter'): 
         _filterStudent = request.form['txtStudentFilter']
         _data=_filterStudent
-        print(_filterStudent)
     if request.form.get('txtActiveFilter'): 
         _filterActive = request.form['txtActiveFilter']
         _data=_filterActive
-        print(_filterActive)
-
+        
     allStudents=ModelStudent.get_all(db,_pos,_data)
     codeStudents=ModelStudent.get_all(db)
     max_code = 0
@@ -541,7 +529,6 @@ def add_student():
     _student_ok = []
     if request.form.get('txtStudent1'):
         _student1 = request.form['txtStudent1']
-        print(_student1)
         if ModelCourse.get_by_class(db, _student1, _id_course ) == None:
             if _student1 != "":
                _student_ok.append(_student1)
